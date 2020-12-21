@@ -20,7 +20,7 @@ def rmdir(directory):
                 item.unlink()
         directory.rmdir()
         
-en_path = os.path.dirname(os.path.realpath(__file__)) + "/patches/magia-en-apk-assets"
+en_path = os.path.dirname(os.path.realpath(__file__)) + "/patches/magia-en-apk-assets/"
 jp_path = os.path.dirname(os.path.realpath(__file__)) + "/build/app/assets/package/"
 print("EN Path: " + en_path)
 print("JP Path: " + jp_path)
