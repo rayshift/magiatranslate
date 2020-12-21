@@ -18,3 +18,7 @@
 	path = patches/images
 	url = https://git.rayshift.io/kamihama/magia-client-image-patches
         branch = master
+[submodule "patches/magia-en-apk-assets"]
+	path = patches/magia-en-apk-assets
+	url = https://git.rayshift.io/kamihama/magia-en-apk-assets
+        branch = master
