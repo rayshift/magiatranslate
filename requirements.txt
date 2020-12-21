@@ -1,0 +1,4 @@
+parse==1.18.0
+Pillow==8.0.1
+pkg-resources==0.0.0
+PyTexturePacker==1.1.0

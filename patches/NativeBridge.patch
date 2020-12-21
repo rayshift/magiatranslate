@@ -1,0 +1,40 @@
+diff --git a/build/app/smali_classes2/jp/f4samurai/bridge/NativeBridge.smali b/build/app/smali_classes2/jp/f4samurai/bridge/NativeBridge.smali
+index 0c7b0b1..c283cbc 100644
+--- a/build/app/smali_classes2/jp/f4samurai/bridge/NativeBridge.smali
++++ b/build/app/smali_classes2/jp/f4samurai/bridge/NativeBridge.smali
+@@ -8,8 +8,6 @@
+ 
+ .field private static sAppActivity:Ljp/f4samurai/AppActivity;
+ 
+-.field private static sCheatHandler:Ljp/f4samurai/bridge/CheatHandler;
+-
+ .field private static sClipboardManager:Landroid/content/ClipboardManager;
+ 
+ 
+@@ -36,13 +34,6 @@
+     sput-object v0, Ljp/f4samurai/bridge/NativeBridge;->sAppActivity:Ljp/f4samurai/AppActivity;
+ 
+     .line 34
+-    new-instance v0, Ljp/f4samurai/bridge/CheatHandler;
+-
+-    sget-object v1, Ljp/f4samurai/bridge/NativeBridge;->sAppActivity:Ljp/f4samurai/AppActivity;
+-
+-    invoke-direct {v0, v1}, Ljp/f4samurai/bridge/CheatHandler;-><init>(Landroid/content/Context;)V
+-
+-    sput-object v0, Ljp/f4samurai/bridge/NativeBridge;->sCheatHandler:Ljp/f4samurai/bridge/CheatHandler;
+ 
+     .line 35
+     sget-object v0, Ljp/f4samurai/bridge/NativeBridge;->sAppActivity:Ljp/f4samurai/AppActivity;
+@@ -354,11 +345,7 @@
+     .locals 1
+ 
+     .line 180
+-    sget-object v0, Ljp/f4samurai/bridge/NativeBridge;->sCheatHandler:Ljp/f4samurai/bridge/CheatHandler;
+-
+-    invoke-virtual {v0}, Ljp/f4samurai/bridge/CheatHandler;->isUnauthorizedUser()Z
+-
+-    move-result v0
++    const v0, 0
+ 
+     return v0
+ .end method

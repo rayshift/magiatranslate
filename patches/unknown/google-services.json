@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "48695978581",
+    "firebase_url": "https://kamihama-io.firebaseio.com",
+    "project_id": "kamihama-io",
+    "storage_bucket": "kamihama-io.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:48695978581:android:bc7cc007c2de2d0e79c2dc",
+        "android_client_info": {
+          "package_name": "io.kamihama.magiatranslate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "48695978581-l3g2vae3su7td5tilbunf8fpb1875np4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlHoCTAsEa1zsIhKfE8nvMVewd0ULYmkw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "48695978581-l3g2vae3su7td5tilbunf8fpb1875np4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

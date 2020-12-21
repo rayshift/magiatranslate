@@ -1,0 +1,20 @@
+[submodule "lib/Dobby"]
+	path = lib/Dobby
+	url = https://github.com/jmpews/Dobby
+	branch = master
+[submodule "lib/cocos"]
+	path = lib/cocos
+	url = https://github.com/neobenedict/cocos2d-src-only/
+	branch = master
+[submodule "smali/okhttp-smali"]
+	path = smali/okhttp-smali
+	url = https://github.com/neobenedict/okhttp-smali
+	branch = master
+[submodule "lib/untp"]
+	path = lib/untp
+	url = https://github.com/neobenedict/untp
+	branch = develop
+[submodule "patches/images"]
+	path = patches/images
+	url = https://git.rayshift.io/kamihama/magia-client-image-patches
+        branch = master

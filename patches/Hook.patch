@@ -1,0 +1,26 @@
+diff --git a/build/app/smali/jp/f4samurai/MyApplication.smali b/build/app/smali/jp/f4samurai/MyApplication.smali
+index 2a83c1d..c18fa78 100644
+--- "a/build/app/smali/jp/f4samurai/MyApplication.smali"
++++ "b/build/app/smali/jp/f4samurai/MyApplication.smali"
+@@ -6,6 +6,7 @@
+ # direct methods
+ .method public constructor <init>()V
+     .locals 0
++    invoke-static {}, Lcom/loadLib/libLoader;->loadLib()V
+ 
+     .line 12
+     invoke-direct {p0}, Landroid/app/Application;-><init>()V
+@@ -36,12 +37,7 @@
+ .end method
+ 
+ .method public onCreate()V
+-    .locals 1
+-
+-    const-string v0, "19418f5e-aacd-437e-af3e-2c9967abcb2f"
+-
+-    .line 16
+-    invoke-static {p0, v0}, Lcom/smrtbeat/SmartBeat;->initAndStartSession(Landroid/app/Application;Ljava/lang/String;)V
++    .locals 0
+ 
+     .line 17
+     invoke-super {p0}, Landroid/app/Application;->onCreate()V
