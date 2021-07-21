@@ -419,6 +419,9 @@ FodyWeavers.xsd
 .vscode/
 
 abiproxy/build/
+abiproxy/.ninja_deps
+abiproxy/.ninja_log
+abiproxy/build.ninja
 lib/cocos_old/
 lib/Dobby_old/
 sign.bat
