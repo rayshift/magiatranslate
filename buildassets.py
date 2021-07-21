@@ -3,7 +3,7 @@ from PIL import Image
 import plistlib
 import ast
 from pathlib import Path
-sys.path.append('lib/untp/src/untp')
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/lib/untp/src/untp')
 import untp
 from PyTexturePacker import Packer
 from shutil import copyfile
@@ -19,9 +19,12 @@ def rmdir(directory):
             else:
                 item.unlink()
         directory.rmdir()
-        
-en_path = os.path.dirname(os.path.realpath(__file__)) + "/patches/magia-en-apk-assets/"
-jp_path = os.path.dirname(os.path.realpath(__file__)) + "/build/app/assets/package/"
+
+basePath = os.path.dirname(os.path.realpath(__file__))
+os.chdir(basePath)
+
+en_path = basePath + "/patches/magia-en-apk-assets/"
+jp_path = basePath + "/build/app/assets/package/"
 print("EN Path: " + en_path)
 print("JP Path: " + jp_path)
 
@@ -31,8 +34,8 @@ for path in Path(en_path).rglob('*.png'):
     en_assets[path.name] = path
 for path in Path(jp_path).rglob('*.png'):
     jp_assets[path.name] = path
-    
-    
+
+
 
 required_assets = [["quest_image0","quest_image1"],
                    ["data_download0"],
@@ -59,10 +62,9 @@ text = path.read_text()
 text = text.replace("com.aniplex.magireco", "io.kamihama.magiatranslate")
 path.write_text(text)
 
-basePath = os.path.dirname(os.path.realpath(__file__))
 rmdir("build/assets")
 Path("build/assets").mkdir(parents=True, exist_ok=True)
-    
+
 for assets in required_assets:
     rmdir("build/assets/work_jp")
     Path("build/assets/work_jp").mkdir(parents=True, exist_ok=True)
@@ -77,26 +79,26 @@ for assets in required_assets:
         jp_asset_plist = str(jp_assets[asset_png])[:-4] + ".plist"
         jp_asset_png = jp_assets[asset_png]
         #print("Working on JP " + jp_asset_plist)
-        
+
         untp.unpacker(str(jp_asset_plist), image_file = str(jp_asset_png), output_dir = "build/assets/work_jp")
         untp.unpacker(str(jp_asset_plist), image_file = str(jp_asset_png), output_dir = "build/assets/work_jp_old")
 
     for asset in assets:
         asset_png = asset + ".png"
-        
+
         if asset_png in en_assets:
             na_asset_plist = str(en_assets[asset_png])[:-4] + ".plist"
             na_asset_png = en_assets[asset_png]
             #print("Working on NA " + na_asset_plist)
             untp.unpacker(str(na_asset_plist), image_file = str(na_asset_png), output_dir = "build/assets/work_en")
-            #print("Skipping NA %s" % asset_png)     
-    
+            #print("Skipping NA %s" % asset_png)
+
     for toCopy in Path("build/assets/work_en").rglob("*.*"):
         filename = os.path.basename(str(toCopy))
         #print("Copying %s" % str(toCopy)[8:])
         if (filename not in ignored_images):
             copyfile("build/assets/work_en/" + filename, "build/assets/work_jp/" + filename)
-    
+
     manualPath = basePath + "patches/images/" + assets[0] + "/"
     if os.path.exists(manualPath):
         print("Adding manual replacements for " + assets[0] + ".")
@@ -104,7 +106,7 @@ for assets in required_assets:
             filename = os.path.basename(str(toCopy))
             print("Copying " + filename + "...")
             copyfile(toCopy, "build/assets/work_jp/" + filename)
-    
+
     if assets[0] == "toppage_bg_020":
         print("Manual override for toppage")
         packer = Packer.create(max_width=2048, max_height=1920, bg_color=0x00ffffff, enable_rotated=False)
@@ -125,6 +127,6 @@ for assets in required_assets:
     savedir = os.path.dirname(jp_asset_png)
     print("Saving to %s" % savedir)
     file_names = os.listdir("build/assets/work_out/")
-    
+
     for file_name in file_names:
         shutil.move(os.path.join("build/assets/work_out/", file_name), savedir)
