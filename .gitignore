@@ -425,3 +425,4 @@ abiproxy/build.ninja
 lib/cocos_old/
 lib/Dobby_old/
 sign.bat
+sign.sh
