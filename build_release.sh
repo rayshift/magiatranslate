@@ -16,30 +16,19 @@ SRCAPK="${1:-${BASEDIR}/apk/vanilla.apk}"
 VERSION="${2:-v0.50}"
 NDK="${3:-${BASEDIR}/ndk/android-ndk-r21e}"
 FORCEOW="${4:-true}"
+TARCHS="${5:-"armeabi-v7a arm64-v8a"}"
 
 RESULT="${BASEDIR}/build/io.kamihama.magiatranslate.${VERSION}.apk"
 
 _pre() {
-	if [ ! -f "${SRCAPK}" ]
-	then
-		echo "Did not find MagiReco APK! Tried path: ${SRCAPK}"
-		_errorexit 5
-	fi
+	[ -f "${SRCAPK}" ] || _errorexit 5 "Did not find MagiReco APK! Tried path: ${SRCAPK}"
 	echo "Found apk ${SRCAPK}"
 
-	if [ ! -d "${NDK}" ]
-	then
-		echo "NDK directory does not exist! Tried path: ${NDK}"
-		_errorexit 6
-	fi
+	[ -d "${NDK}" ] || _errorexit 6 "NDK directory does not exist! Tried path: ${NDK}"
 	NDK=$(realpath "${NDK}")
 	echo "Found ndk directory ${NDK}"
 
-	if [ ! -f "${NDK}/build/cmake/android.toolchain.cmake" ]
-	then
-		echo "NDK is missing! Unpack it into ${NDK}"
-		_errorexit 7
-	fi
+	[ -f "${NDK}/build/cmake/android.toolchain.cmake" ] || _errorexit 7 "NDK is missing! Unpack it into ${NDK}"
 
 	for executie in ${BASH} ${CMAKE} ${NINJA} ${CURL} ${JAVA} ${PYTHON}
 	do
@@ -70,7 +59,10 @@ _create() {
 	echo "Running apktool..."
 	${JAVA} -jar "${BASEDIR}/build/${APKTOOL}" d "${SRCAPK}" -o "${BASEDIR}/build/app/"
 	mkdir -p "${BASEDIR}/build/app/smali/com/loadLib"
-	mkdir -p "${BASEDIR}/build/app/lib/arm64-v8a"
+	for tarch in ${TARCHS}
+	do
+		mkdir -p "${BASEDIR}/build/app/lib/${tarch}"
+	done
 
 	echo "Applying smali patches..."
 	git -C "${BASEDIR}" apply --stat "${BASEDIR}/patches/NativeBridge.patch"
@@ -90,10 +82,10 @@ _create() {
 
 _build() {
 	echo "Copying new smali files..."
-	cp ${BASEDIR}/smali/loader/*.smali "${BASEDIR}/build/app/smali/com/loadLib/"
-	mkdir -p ${BASEDIR}/build/app/smali_classes2/io/kamihama/magianative
+	cp "${BASEDIR}"/smali/loader/*.smali "${BASEDIR}/build/app/smali/com/loadLib/"
+	mkdir -p "${BASEDIR}/build/app/smali_classes2/io/kamihama/magianative"
 	echo "Copying magianative..."
-	cp ${BASEDIR}/smali/MagiaNative/app/src/main/java/io/kamihama/magianative/*.smali "${BASEDIR}/build/app/smali_classes2/io/kamihama/magianative/"
+	cp "${BASEDIR}"/smali/MagiaNative/app/src/main/java/io/kamihama/magianative/*.smali "${BASEDIR}/build/app/smali_classes2/io/kamihama/magianative/"
 	echo "Copying libraries..."
 	cp -r "${BASEDIR}/smali/okhttp-smali/okhttp3/" "${BASEDIR}/build/app/smali_classes2/okhttp3/"
 	cp -r "${BASEDIR}/smali/okhttp-smali/okio/" "${BASEDIR}/build/app/smali_classes2/okio/"
@@ -103,32 +95,35 @@ _build() {
 
 	echo "Building libraries."
 
-	rm -rf "${BASEDIR}/build/arm64-v8a"
-	mkdir -p "${BASEDIR}/build/arm64-v8a"
+	for tarch in ${TARCHS}
+	do
+		rm -rf "${BASEDIR}/build/${tarch}"
+		mkdir -p "${BASEDIR}/build/${tarch}"
 
-	echo "Running cmake arm64-v8a..."
-	cd "${BASEDIR}/build/arm64-v8a"
-	${CMAKE} -G Ninja \
-		-DANDROID_ABI="arm64-v8a" \
-		-DCMAKE_BUILD_TYPE:STRING="Release" \
-		-DCMAKE_INSTALL_PREFIX:PATH="${BASEDIR}/build/arm64-v8a" \
-		-DCMAKE_TOOLCHAIN_FILE:FILEPATH="${NDK}/build/cmake/android.toolchain.cmake" \
-		-DCMAKE_MAKE_PROGRAM:FILEPATH="${NINJA}" \
-		-DANDROID_PLATFORM="21" \
-		-DCMAKE_SYSTEM_NAME="Android" \
-		-DCMAKE_ANDROID_ARCH_ABI="arm64-v8a" \
-		-DCMAKE_ANDROID_NDK="${NDK}" \
-		-DCMAKE_SYSTEM_VERSION="16" \
-		-DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION="clang" \
-		-DDOBBY_DEBUG="OFF" \
-		"${BASEDIR}/"
-	[ "$?" -ne "0" ] && _errorexit 1
-	${NINJA}
-	[ "$?" -ne "0" ] && _errorexit 2
+		echo "Running cmake ${tarch}..."
+		cd "${BASEDIR}/build/${tarch}"
+		${CMAKE} -G Ninja \
+			-DANDROID_ABI="${tarch}" \
+			-DCMAKE_BUILD_TYPE:STRING="Release" \
+			-DCMAKE_INSTALL_PREFIX:PATH="${BASEDIR}/build/${tarch}" \
+			-DCMAKE_TOOLCHAIN_FILE:FILEPATH="${NDK}/build/cmake/android.toolchain.cmake" \
+			-DCMAKE_MAKE_PROGRAM:FILEPATH="${NINJA}" \
+			-DANDROID_PLATFORM="21" \
+			-DCMAKE_SYSTEM_NAME="Android" \
+			-DCMAKE_ANDROID_ARCH_ABI="${tarch}" \
+			-DCMAKE_ANDROID_NDK="${NDK}" \
+			-DCMAKE_SYSTEM_VERSION="16" \
+			-DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION="clang" \
+			-DDOBBY_DEBUG="OFF" \
+			"${BASEDIR}/"
+		[ "$?" -ne "0" ] && _errorexit 1 "cmake failed for ${tarch}"
+		${NINJA}
+		[ "$?" -ne "0" ] && _errorexit 2 "ninja failed for ${tarch}"
 
-	echo "Copying libraries..."
-	cp "${BASEDIR}/build/arm64-v8a/libuwasa.so" "${BASEDIR}/build/app/lib/arm64-v8a/libuwasa.so"
-	cp "${BASEDIR}/abiproxy/build/arm64-v8a/libabiproxy.so" "${BASEDIR}/build/app/lib/arm64-v8a/libabiproxy.so"
+		echo "Copying libraries for ${tarch}..."
+		cp "${BASEDIR}/build/${tarch}/libuwasa.so" "${BASEDIR}/build/app/lib/${tarch}/libuwasa.so"
+		cp "${BASEDIR}/abiproxy/build/${tarch}/libabiproxy.so" "${BASEDIR}/build/app/lib/${tarch}/libabiproxy.so"
+	done
 
 	echo "Rebuilding APK..."
 	${JAVA} -jar "${BASEDIR}/build/${APKTOOL}" b "${BASEDIR}/build/app/" -o "${RESULT}"
@@ -138,16 +133,13 @@ _build() {
 
 _signandupload() {
 	echo "Signing apk..."
-	if [ ! -f "${BASEDIR}/sign.sh" ]
-	then
-		echo "Signer is missing! It must be there: ${BASEDIR}/sign.sh"
-		_errorexit 8
-	fi
+	[ -f "${BASEDIR}/sign.sh" ] || _errorexit 8 "Signer is missing! It must be there: ${BASEDIR}/sign.sh"
 	${BASH} "${BASEDIR}/sign.sh" "${RESULT}"
 	[ "$?" -ne "0" ] && _errorexit 3 || _exit
 }
 
 _errorexit() {
+	[ ! -z "$2" ] && echo "$2"
 	echo "An error has occurred, exiting."
 	exit ${1}
 }
