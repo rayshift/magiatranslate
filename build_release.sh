@@ -8,8 +8,9 @@ NINJA="${MT_NINJA:-ninja}" # /usr/bin/ninja
 CURL="${MT_CURL:-curl}" # /usr/bin/curl
 JAVA="${MT_JAVA:-java}" # /usr/bin/java
 PYTHON="${MT_PYTHON:-python3}" # /usr/bin/python3.8
-JARSIGNER="${MT_JARSIGNER:-jarsigner}" # /usr/bin/jarsigner
-APKTOOL="${MT_APKTOOL:-apktool_2.5.0.jar}"
+APKTOOL="${MT_APKTOOL:-apktool_2.6.0.jar}"
+ZIPALIGN="${MT_ZIPALIGN:-zipalign}" # ~/android-sdk/build-tools/zipalign
+APKSIGNER="${MT_APKSIGNER:-apksigner}" # ~/android-sdk/build-tools/apksigner
 
 # arg-based
 SRCAPK="${1:-${BASEDIR}/apk/vanilla.apk}"

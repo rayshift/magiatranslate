@@ -2,21 +2,34 @@
 BASEDIR="$(realpath "$(dirname "${0}")")"
 
 # env-based
-JARSIGNER="${MT_JARSIGNER:-jarsigner}" # /usr/bin/jarsigner
+ZIPALIGN="${MT_ZIPALIGN:-zipalign}" # ~/android-sdk/build-tools/zipalign
+APKSIGNER="${MT_APKSIGNER:-apksigner}" # ~/android-sdk/build-tools/apksigner
+
+# hardcode-based
+#ZIPALIGN="${BASEDIR}/abt/zipalign"
+#APKSIGNER="${BASEDIR}/abt/apksigner"
 
 # arg-based
 APK="${1:-${BASEDIR}/build/io.kamihama.magiatranslate.v0.50.apk}"
 KEYSTORE="${2:-${BASEDIR}/changeme.keystore}"
 
-if [ ! -f "${APK}" ]
-then
-	echo "Missing apk to sign! Tried file: ${APK}"
-	exit 1
-fi
-if [ ! -f "${KEYSTORE}" ]
-then
-	echo "Missing keystore! Tried file: ${KEYSTORE}"
-	exit 2
-fi
+_errorexit() {
+	[ -z "${2}" ] || echo "${2}"
+	echo "Signing failed."
+	exit ${1}
+}
 
-${JARSIGNER} -sigalg SHA512withRSA -digestalg SHA-512 -keystore "${KEYSTORE}" "${APK}" -storepass changeme name
+[ -f "${APK}" ] || _errorexit 1 "Missing apk to sign! Tried file: ${APK}"
+[ -f "${KEYSTORE}" ] || _errorexit 2 "Missing keystore! Tried file: ${KEYSTORE}"
+
+echo "Doing zipalign..."
+"${ZIPALIGN}" -f -p 4 "${APK}" "${APK}.tmp"
+[ "$?" -ne "0" ] && _errorexit 3 "Failed to zipalign!"
+
+echo "Doing apksign..."
+"${APKSIGNER}" sign --ks "${KEYSTORE}" --ks-pass pass:changeme --ks-key-alias name "${APK}.tmp"
+[ "$?" -ne "0" ] && _errorexit 4 "Failed to apksign!"
+
+echo "Removing tmp file..."
+mv "${APK}.tmp" "${APK}"
+exit 0

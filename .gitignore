@@ -426,3 +426,8 @@ lib/cocos_old/
 lib/Dobby_old/
 sign.bat
 sign.sh
+jarsign.sh
+
+# Android NDK, build-tools
+/ndk/
+/abt/
