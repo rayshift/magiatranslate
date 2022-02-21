@@ -14,7 +14,7 @@ index 0c7b0b1..c283cbc 100644
 @@ -36,13 +34,6 @@
      sput-object v0, Ljp/f4samurai/bridge/NativeBridge;->sAppActivity:Ljp/f4samurai/AppActivity;
  
-     .line 34
+     .line 37
 -    new-instance v0, Ljp/f4samurai/bridge/CheatHandler;
 -
 -    sget-object v1, Ljp/f4samurai/bridge/NativeBridge;->sAppActivity:Ljp/f4samurai/AppActivity;
@@ -23,18 +23,22 @@ index 0c7b0b1..c283cbc 100644
 -
 -    sput-object v0, Ljp/f4samurai/bridge/NativeBridge;->sCheatHandler:Ljp/f4samurai/bridge/CheatHandler;
  
-     .line 35
+     .line 38
      sget-object v0, Ljp/f4samurai/bridge/NativeBridge;->sAppActivity:Ljp/f4samurai/AppActivity;
-@@ -354,11 +345,7 @@
+@@ -535,11 +526,8 @@
      .locals 1
  
-     .line 180
+     .line 183
 -    sget-object v0, Ljp/f4samurai/bridge/NativeBridge;->sCheatHandler:Ljp/f4samurai/bridge/CheatHandler;
 -
 -    invoke-virtual {v0}, Ljp/f4samurai/bridge/CheatHandler;->isUnauthorizedUser()Z
 -
 -    move-result v0
++
 +    const v0, 0
  
      return v0
  .end method
+-- 
+2.7.4
+

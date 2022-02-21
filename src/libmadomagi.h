@@ -1,5 +1,6 @@
 enum BaseSceneLayerType {
     DebugMenuSceneLayer,
+    DebugSelectQuestSceneLayer,
     CameraSceneLayer,
     WebSceneLayer,
     StartupSceneLayer,
@@ -23,6 +24,7 @@ enum BaseSceneLayerType {
     DownloadSceneLayer,
     DebugSelectURLSceneLayer,
     QuestStoredDataSceneLayer,
+    SendReplayDataSceneLayer,
     InputTextSceneLayer,
     LoadingSceneLayer,
     ErrorSceneLayer,
@@ -34,6 +36,7 @@ enum BaseSceneLayerType {
 
 char const* BaseSceneLayerTypeStrings[] {
     "DebugMenuSceneLayer",
+    "DebugSelectQuestSceneLayer",
     "CameraSceneLayer",
     "WebSceneLayer",
     "StartupSceneLayer",
@@ -57,6 +60,7 @@ char const* BaseSceneLayerTypeStrings[] {
     "DownloadSceneLayer",
     "DebugSelectURLSceneLayer",
     "QuestStoredDataSceneLayer",
+    "SendReplayDataSceneLayer",
     "InputTextSceneLayer",
     "LoadingSceneLayer",
     "ErrorSceneLayer",
