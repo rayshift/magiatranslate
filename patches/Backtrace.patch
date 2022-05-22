@@ -1,0 +1,28 @@
+diff --git a/build/app/smali_classes2/jp/f4samurai/backtrace/BacktraceHandler.smali b/build/app/smali_classes2/jp/f4samurai/backtrace/BacktraceHandler.smali
+index 6bc2d4d..67e0489 100644
+--- a/build/app/smali_classes2/jp/f4samurai/backtrace/BacktraceHandler.smali
++++ b/build/app/smali_classes2/jp/f4samurai/backtrace/BacktraceHandler.smali
+@@ -6,9 +6,9 @@
+ # static fields
+ .field private static final ANR_TIMEOUT:I = 0xbb8
+ 
+-.field private static final ENDPOINT_URL:Ljava/lang/String; = "https://f4samurai.sp.backtrace.io:6098"
++.field private static final ENDPOINT_URL:Ljava/lang/String; = "https://walpurgisnacht.rayshift.io/backtrace"
+ 
+-.field private static final SUBMISSION_TOKEN:Ljava/lang/String; = "a798a9b785f35254cfee3086e38053e7597ba9a49cdcc8b0a90d64ef052786b6"
++.field private static final SUBMISSION_TOKEN:Ljava/lang/String; = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+ 
+ .field private static sBacktraceClient:Lbacktraceio/library/BacktraceClient;
+ 
+@@ -90,9 +90,9 @@
+     :cond_0
+     new-instance v0, Lbacktraceio/library/BacktraceCredentials;
+ 
+-    const-string v1, "https://f4samurai.sp.backtrace.io:6098"
++    const-string v1, "https://walpurgisnacht.rayshift.io/backtrace"
+ 
+-    const-string v2, "a798a9b785f35254cfee3086e38053e7597ba9a49cdcc8b0a90d64ef052786b6"
++    const-string v2, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+ 
+     invoke-direct {v0, v1, v2}, Lbacktraceio/library/BacktraceCredentials;-><init>(Ljava/lang/String;Ljava/lang/String;)V
+ 

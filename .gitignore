@@ -431,3 +431,5 @@ jarsign.sh
 # Android NDK, build-tools
 /ndk/
 /abt/
+com.aniplex.magireco.arm8.apk
+test/

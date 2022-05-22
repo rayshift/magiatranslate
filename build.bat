@@ -37,8 +37,10 @@ echo Applying smali patches...
 cd %~dp0
 call git apply --stat "%~dp0\patches\NativeBridge.patch"
 call git apply --stat "%~dp0\patches\Hook.patch"
+call git apply --stat "%~dp0\patches\Backtrace.patch"
 call git apply "%~dp0\patches\NativeBridge.patch"
 call git apply "%~dp0\patches\Hook.patch"
+call git apply "%~dp0\patches\Backtrace.patch"
 echo Applying misc patches...
 REM call copy /Y "%~dp0\patches\images\story_ui_sprites00_patch.plist" "%~dp0\build\app\assets\package\story\story_ui_sprites00.plist"
 REM call copy /Y "%~dp0\patches\images\story_ui_sprites00_patch.png" "%~dp0\build\app\assets\package\story\story_ui_sprites00.png"
