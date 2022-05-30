@@ -48,7 +48,7 @@ REM call copy /Y "%~dp0\patches\images\story_ui_sprites00_patch.png" "%~dp0\buil
 call copy /Y "%~dp0\patches\koruri-semibold.ttf" "%~dp0\build\app\assets\fonts\koruri-semibold.ttf"
 
 echo Updating sprites and AndroidManifest.xml...
-call python buildassets.py
+call python3 buildassets.py
 
 :build
 echo Copying new smali files...

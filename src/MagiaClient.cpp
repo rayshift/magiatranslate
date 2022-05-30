@@ -317,24 +317,26 @@ void *setPositionNew(uintptr_t label, cocos2d::Vec2 const& position) {
     // History
     if (storyLogUnitAddMessageOffset != 0 && addr >= storyLogUnitAddMessageOffset) {
         uintptr_t difference = addr - storyLogUnitAddMessageOffset;
-        //LOGI("LOG MESSAGE: %.2f %.2f", position.x, position.y);
-        //LOGI("Difference: %p", (void *)difference);
-        if (position.y >= 55.50 && position.y <= 56.50 && difference <= 0x800) {
+        LOGD("LOG MESSAGE: %.2f %.2f", position.x, position.y);
+        LOGD("Difference: %p", (void *)difference);
+        //if (position.y >= 55.50 && position.y <= 56.50 && difference <= 0x1000) {
+        if (position.y >= 37.5 && position.y <= 39.5 && difference <= 0x1000) {
             float newPosX = position.x + 125.0;
-            //LOGD("Moved log text from %.2f to %.2f", position.x, newPosX);
+        LOGD("Moved log text from %.2f to %.2f", position.x, newPosX);
             cocos2d::Vec2 newPosition = cocos2d::Vec2(newPosX, 66.50);
             return setPositionHooked(label, newPosition);
         }
         else if (difference <= 0x200 && position.x == 70.00) {
             LOGD("Moving left-aligned name down in the log.");
-            auto newY = position.y - 15.0;
+            auto newY = position.y;
             cocos2d::Vec2 newPosition = cocos2d::Vec2(position.x, newY);
             return setPositionHooked(label, newPosition);
         }
         else if (difference <= 0x200 && position.x == 500.00) { // Names on the right
             LOGD("Moving name further to the right in log.");
             auto newX = position.x + 200;
-            auto newY = position.y - 15.0;
+            //auto newY = position.y - 15.0;
+            auto newY = position.y;
             cocos2d::Vec2 newPosition = cocos2d::Vec2(newX, newY);
             return setPositionHooked(label, newPosition);
         }
