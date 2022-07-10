@@ -1,6 +1,7 @@
 enum BaseSceneLayerType {
     DebugMenuSceneLayer,
     DebugSelectQuestSceneLayer,
+    DebugSelectStorySceneLayer,
     CameraSceneLayer,
     WebSceneLayer,
     StartupSceneLayer,
@@ -37,6 +38,7 @@ enum BaseSceneLayerType {
 char const* BaseSceneLayerTypeStrings[] {
     "DebugMenuSceneLayer",
     "DebugSelectQuestSceneLayer",
+    "DebugSelectStorySceneLayer",
     "CameraSceneLayer",
     "WebSceneLayer",
     "StartupSceneLayer",
