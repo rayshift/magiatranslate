@@ -53,12 +53,12 @@ call python3 buildassets.py
 :build
 echo Copying new smali files...
 call copy /Y "%~dp0\smali\loader\*.smali" "%~dp0\build\app\smali\com\loadLib\"
-mkdir %~dp0\build\app\smali_classes2\io\kamihama\magianative\
+mkdir %~dp0\build\app\smali\io\kamihama\magianative\
 echo Copying magianative...
-call copy /Y "%~dp0\smali\MagiaNative\app\src\main\java\io\kamihama\magianative\*.smali" "%~dp0\build\app\smali_classes2\io\kamihama\magianative\"
+call copy /Y "%~dp0\smali\MagiaNative\app\src\main\java\io\kamihama\magianative\*.smali" "%~dp0\build\app\smali\io\kamihama\magianative\"
 echo Copying libraries...
-call robocopy /NFL /NDL /NJH /NJS /nc /ns /e %~dp0\smali\okhttp-smali\okhttp3\ %~dp0\build\app\smali_classes2\okhttp3\
-call robocopy /NFL /NDL /NJH /NJS /nc /ns /e %~dp0\smali\okhttp-smali\okio\ %~dp0\build\app\smali_classes2\okio\
+call robocopy /NFL /NDL /NJH /NJS /nc /ns /e %~dp0\smali\okhttp-smali\okhttp3\ %~dp0\build\app\smali\okhttp3\
+call robocopy /NFL /NDL /NJH /NJS /nc /ns /e %~dp0\smali\okhttp-smali\okio\ %~dp0\build\app\smali\okio\
 echo Copying unknown...
 call robocopy /NFL /NDL /NJH /NJS /nc /ns /e %~dp0\patches\unknown\ %~dp0\build\app\unknown\
 call copy /Y "%~dp0\patches\strings.xml" "%~dp0\build\app\res\values\strings.xml"

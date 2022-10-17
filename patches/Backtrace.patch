@@ -1,7 +1,7 @@
-diff --git a/build/app/smali_classes2/jp/f4samurai/backtrace/BacktraceHandler.smali b/build/app/smali_classes2/jp/f4samurai/backtrace/BacktraceHandler.smali
+diff --git a/build/app/smali/jp/f4samurai/backtrace/BacktraceHandler.smali b/build/app/smali/jp/f4samurai/backtrace/BacktraceHandler.smali
 index 6bc2d4d..67e0489 100644
---- a/build/app/smali_classes2/jp/f4samurai/backtrace/BacktraceHandler.smali
-+++ b/build/app/smali_classes2/jp/f4samurai/backtrace/BacktraceHandler.smali
+--- a/build/app/smali/jp/f4samurai/backtrace/BacktraceHandler.smali
++++ b/build/app/smali/jp/f4samurai/backtrace/BacktraceHandler.smali
 @@ -6,9 +6,9 @@
  # static fields
  .field private static final ANR_TIMEOUT:I = 0xbb8

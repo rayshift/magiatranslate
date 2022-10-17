@@ -1,7 +1,7 @@
-diff --git a/build/app/smali_classes2/jp/f4samurai/bridge/NativeBridge.smali b/build/app/smali_classes2/jp/f4samurai/bridge/NativeBridge.smali
+diff --git a/build/app/smali/jp/f4samurai/bridge/NativeBridge.smali b/build/app/smali/jp/f4samurai/bridge/NativeBridge.smali
 index 6012fad..681a112 100644
---- a/build/app/smali_classes2/jp/f4samurai/bridge/NativeBridge.smali
-+++ b/build/app/smali_classes2/jp/f4samurai/bridge/NativeBridge.smali
+--- a/build/app/smali/jp/f4samurai/bridge/NativeBridge.smali
++++ b/build/app/smali/jp/f4samurai/bridge/NativeBridge.smali
 @@ -8,8 +8,6 @@
  
  .field private static sAppActivity:Ljp/f4samurai/AppActivity;
@@ -11,26 +11,26 @@ index 6012fad..681a112 100644
  .field private static sClipboardManager:Landroid/content/ClipboardManager;
  
  
-@@ -36,13 +34,6 @@
+@@ -36,13 +34,7 @@
      sput-object v0, Ljp/f4samurai/bridge/NativeBridge;->sAppActivity:Ljp/f4samurai/AppActivity;
  
      .line 37
 -    new-instance v0, Ljp/f4samurai/bridge/CheatHandler;
 -
 -    sget-object v1, Ljp/f4samurai/bridge/NativeBridge;->sAppActivity:Ljp/f4samurai/AppActivity;
--
+ 
 -    invoke-direct {v0, v1}, Ljp/f4samurai/bridge/CheatHandler;-><init>(Landroid/content/Context;)V
 -
 -    sput-object v0, Ljp/f4samurai/bridge/NativeBridge;->sCheatHandler:Ljp/f4samurai/bridge/CheatHandler;
  
      .line 38
-     sget-object v0, Ljp/f4samurai/bridge/NativeBridge;->sAppActivity:Ljp/f4samurai/AppActivity;
-@@ -535,11 +526,7 @@
+     invoke-static {}, Ljp/f4samurai/AppActivity;->getContext()Landroid/content/Context;
+@@ -531,11 +523,8 @@
      .locals 1
  
      .line 181
 -    sget-object v0, Ljp/f4samurai/bridge/NativeBridge;->sCheatHandler:Ljp/f4samurai/bridge/CheatHandler;
--
+ 
 -    invoke-virtual {v0}, Ljp/f4samurai/bridge/CheatHandler;->isUnauthorizedUser()Z
 -
 -    move-result v0
@@ -38,7 +38,7 @@ index 6012fad..681a112 100644
  
      return v0
  .end method
-@@ -630,13 +617,6 @@
+@@ -626,13 +615,6 @@
      .locals 2
  
      .line 121
@@ -52,7 +52,7 @@ index 6012fad..681a112 100644
  
      return-void
  .end method
-@@ -645,13 +625,6 @@
+@@ -641,13 +623,6 @@
      .locals 2
  
      .line 130
@@ -66,7 +66,7 @@ index 6012fad..681a112 100644
  
      return-void
  .end method
-@@ -660,13 +633,6 @@
+@@ -656,13 +631,6 @@
      .locals 2
  
      .line 112

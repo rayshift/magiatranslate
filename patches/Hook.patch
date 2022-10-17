@@ -1,7 +1,7 @@
-diff --git a/build/app/smali_classes2/jp/f4samurai/MyApplication.smali b/build/app/smali_classes2/jp/f4samurai/MyApplication.smali
+diff --git a/build/app/smali/jp/f4samurai/MyApplication.smali b/build/app/smali/jp/f4samurai/MyApplication.smali
 index 2a83c1d..c18fa78 100644
---- "a/build/app/smali_classes2/jp/f4samurai/MyApplication.smali"
-+++ "b/build/app/smali_classes2/jp/f4samurai/MyApplication.smali"
+--- "a/build/app/smali/jp/f4samurai/MyApplication.smali"
++++ "b/build/app/smali/jp/f4samurai/MyApplication.smali"
 @@ -6,6 +6,7 @@
  # direct methods
  .method public constructor <init>()V
