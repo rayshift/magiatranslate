@@ -7,6 +7,6 @@
 /**************************
  *   Magia Translate Ver  *
  **************************/
-#define MT_VERSION 118
+#define MT_VERSION 119
 
 #endif
