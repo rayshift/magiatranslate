@@ -6,7 +6,7 @@ CMAKE="${MT_CMAKE:-cmake}" # /usr/bin/cmake
 NINJA="${MT_NINJA:-ninja}" # /usr/bin/ninja
 
 # arg-based
-NDK="${1:-${BASEDIR}/../ndk/android-ndk-r16b}"
+NDK="${3:-${BASEDIR}/ndk/android-ndk-r21e}"
 TARCHS="${2:-"armeabi-v7a arm64-v8a"}"
 
 _start() {
@@ -36,13 +36,12 @@ _build() {
 			-DCMAKE_INSTALL_PREFIX:PATH="${BASEDIR}/build/${tarch}" \
 			-DCMAKE_TOOLCHAIN_FILE:FILEPATH="${NDK}/build/cmake/android.toolchain.cmake" \
 			-DCMAKE_MAKE_PROGRAM:FILEPATH="${NINJA}" \
-			-DANDROID_PLATFORM="android-19" \
+			-DANDROID_PLATFORM="21" \
 			-DCMAKE_SYSTEM_NAME="Android" \
 			-DCMAKE_ANDROID_ARCH_ABI="${tarch}" \
 			-DCMAKE_ANDROID_NDK="${NDK}" \
 			-DCMAKE_SYSTEM_VERSION="16" \
 			-DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION="clang" \
-			-DCMAKE_ANDROID_STL_TYPE="gnustl_static" \
 			"${BASEDIR}/"
 		[ "$?" -ne "0" ] && _errorexit 1 "cmake failed for ${tarch}"
 		${NINJA}

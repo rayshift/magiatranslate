@@ -580,7 +580,7 @@ void *hook_loop(void *arguments) {
     }
 
     // Change font
-    void *cocosCreateLabelPtr = lookup_symbol(libLocation, "_ZN7cocos2d5Label13createWithTTFERKSsS2_fRKNS_4SizeENS_14TextHAlignmentENS_14TextVAlignmentE");
+    void *cocosCreateLabelPtr = lookup_symbol(libLocation, "_ZN7cocos2d5Label13createWithTTFERKNSt6__ndk112basic_stringIcNS1_11char_traitsIcEENS1_9allocatorIcEEEES9_fRKNS_4SizeENS_14TextHAlignmentENS_14TextVAlignmentE");
 
     if (cocosCreateLabelPtr != nullptr) {
         LOGD("Found cocos2d::Label::createWithTTF at %p.", (void *)cocosCreateLabel);
@@ -616,7 +616,7 @@ void *hook_loop(void *arguments) {
     }
     storyMessageUnitCreateMessageAreaOffset = reinterpret_cast<uintptr_t>(storyMessageUnitCreateMessageArea);
     
-    void *storyLogUnitAddMessage = lookup_symbol(libLocation, "_ZN12StoryLogUnit10addMessageENS_11MessageType13MessageType__ERKSs");
+    void *storyLogUnitAddMessage = lookup_symbol(libLocation, "_ZN12StoryLogUnit10addMessageENS_11MessageType13MessageType__ERKNSt6__ndk112basic_stringIcNS2_11char_traitsIcEENS2_9allocatorIcEEEE");
     
     if (storyLogUnitAddMessage == nullptr) {
         initialization_error("Unable to find a pointer for StoryLogUnit::addMessage.");
@@ -624,7 +624,7 @@ void *hook_loop(void *arguments) {
     }
     storyLogUnitAddMessageOffset = reinterpret_cast<uintptr_t>(storyLogUnitAddMessage);
 
-    void *storyLogUnitAddNarrationOffsetPtr = lookup_symbol(libLocation, "_ZN12StoryLogUnit19addNarrationMessageERKSs");
+    void *storyLogUnitAddNarrationOffsetPtr = lookup_symbol(libLocation, "_ZN12StoryLogUnit19addNarrationMessageERKNSt6__ndk112basic_stringIcNS0_11char_traitsIcEENS0_9allocatorIcEEEE");
 
     if (storyLogUnitAddNarrationOffsetPtr == nullptr) {
         initialization_error("Unable to find a pointer for StoryLogUnit::addNarrationMessage.");
@@ -633,7 +633,7 @@ void *hook_loop(void *arguments) {
 
     storyLogUnitAddNarrationOffset = reinterpret_cast<uintptr_t>(storyLogUnitAddNarrationOffsetPtr);
 
-    void *storyCharaUnitonTextHome = lookup_symbol(libLocation, "_ZN14StoryCharaUnit10onTextHomeESt10shared_ptrI16StoryTurnCommandEb");
+    void *storyCharaUnitonTextHome = lookup_symbol(libLocation, "_ZN14StoryCharaUnit10onTextHomeENSt6__ndk110shared_ptrI16StoryTurnCommandEEb");
     // StoryCharaUnit::onTextHome(std::shared_ptr<StoryTurnCommand>, bool)
     
     if (storyCharaUnitonTextHome == nullptr) {

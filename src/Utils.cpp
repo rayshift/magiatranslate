@@ -68,10 +68,12 @@ void* lookup_symbol(const char* path, const char* symbolname)
     if (imagehandle != NULL){
         void * sym = dlsym(imagehandle, symbolname);
         if (sym != NULL){
+            dlclose(imagehandle);
             return sym;
             }
         else{
-            LOGI("(lookup_symbol) dlsym didn't work\n");
+            LOGI("(lookup_symbol) dlsym didn't work: %s, %s\n", path, symbolname);
+            dlclose(imagehandle);
             return NULL;
         }
     }

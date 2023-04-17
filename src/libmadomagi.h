@@ -2,6 +2,7 @@ enum BaseSceneLayerType {
     DebugMenuSceneLayer,
     DebugSelectQuestSceneLayer,
     DebugSelectStorySceneLayer,
+    DebugSelectMysteriesSceneLayer,
     CameraSceneLayer,
     WebSceneLayer,
     StartupSceneLayer,
@@ -32,6 +33,8 @@ enum BaseSceneLayerType {
     NetworkErrorSceneLayer,
     TapSceneLayer,
     EmotionBoardSceneLayer,
+    GlassTapSceneLayer,
+    QuestViewerSceneLayer,
     BaseSceneLayerTypeMaxValue
 };
 
@@ -39,6 +42,7 @@ char const* BaseSceneLayerTypeStrings[] {
     "DebugMenuSceneLayer",
     "DebugSelectQuestSceneLayer",
     "DebugSelectStorySceneLayer",
+    "DebugSelectMysteriesSceneLayer",
     "CameraSceneLayer",
     "WebSceneLayer",
     "StartupSceneLayer",
@@ -68,6 +72,8 @@ char const* BaseSceneLayerTypeStrings[] {
     "ErrorSceneLayer",
     "NetworkErrorSceneLayer",
     "TapSceneLayer",
+    "GlassTapSceneLayer",
+    "QuestViewerSceneLayer",
     "EmotionBoardSceneLayer"
 };
 
