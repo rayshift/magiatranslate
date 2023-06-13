@@ -3,45 +3,47 @@ index 6012fad..681a112 100644
 --- a/build/app/smali/jp/f4samurai/bridge/NativeBridge.smali
 +++ b/build/app/smali/jp/f4samurai/bridge/NativeBridge.smali
 @@ -8,8 +8,6 @@
- 
+
  .field private static sAppActivity:Ljp/f4samurai/AppActivity;
- 
+
 -.field private static sCheatHandler:Ljp/f4samurai/bridge/CheatHandler;
 -
  .field private static sClipboardManager:Landroid/content/ClipboardManager;
- 
- 
-@@ -36,13 +34,7 @@
+
+
+@@ -43,15 +41,6 @@
+
      sput-object v0, Ljp/f4samurai/bridge/NativeBridge;->sAppActivity:Ljp/f4samurai/AppActivity;
- 
-     .line 37
+
+-    .line 39
 -    new-instance v0, Ljp/f4samurai/bridge/CheatHandler;
 -
 -    sget-object v1, Ljp/f4samurai/bridge/NativeBridge;->sAppActivity:Ljp/f4samurai/AppActivity;
- 
+-
 -    invoke-direct {v0, v1}, Ljp/f4samurai/bridge/CheatHandler;-><init>(Landroid/content/Context;)V
 -
 -    sput-object v0, Ljp/f4samurai/bridge/NativeBridge;->sCheatHandler:Ljp/f4samurai/bridge/CheatHandler;
- 
-     .line 38
+-
+     .line 40
      invoke-static {}, Ljp/f4samurai/AppActivity;->getContext()Landroid/content/Context;
-@@ -531,11 +523,8 @@
+
+@@ -539,11 +528,7 @@
      .locals 1
- 
-     .line 181
+
+     .line 195
 -    sget-object v0, Ljp/f4samurai/bridge/NativeBridge;->sCheatHandler:Ljp/f4samurai/bridge/CheatHandler;
- 
+-
 -    invoke-virtual {v0}, Ljp/f4samurai/bridge/CheatHandler;->isUnauthorizedUser()Z
 -
 -    move-result v0
 +    const v0, 0
- 
+
      return v0
  .end method
-@@ -626,13 +615,6 @@
+@@ -649,13 +634,6 @@
      .locals 2
- 
-     .line 121
+
+     .line 123
 -    sget-object v0, Ljp/f4samurai/bridge/NativeBridge;->sAppActivity:Ljp/f4samurai/AppActivity;
 -
 -    new-instance v1, Ljp/f4samurai/bridge/NativeBridge$2;
@@ -49,13 +51,13 @@ index 6012fad..681a112 100644
 -    invoke-direct {v1, p0}, Ljp/f4samurai/bridge/NativeBridge$2;-><init>(Ljava/lang/String;)V
 -
 -    invoke-virtual {v0, v1}, Ljp/f4samurai/AppActivity;->runOnUiThread(Ljava/lang/Runnable;)V
- 
+
      return-void
  .end method
-@@ -641,13 +623,6 @@
+@@ -664,13 +642,6 @@
      .locals 2
- 
-     .line 130
+
+     .line 132
 -    sget-object v0, Ljp/f4samurai/bridge/NativeBridge;->sAppActivity:Ljp/f4samurai/AppActivity;
 -
 -    new-instance v1, Ljp/f4samurai/bridge/NativeBridge$3;
@@ -63,13 +65,13 @@ index 6012fad..681a112 100644
 -    invoke-direct {v1, p0, p1}, Ljp/f4samurai/bridge/NativeBridge$3;-><init>(Ljava/lang/String;Ljava/lang/String;)V
 -
 -    invoke-virtual {v0, v1}, Ljp/f4samurai/AppActivity;->runOnUiThread(Ljava/lang/Runnable;)V
- 
+
      return-void
  .end method
-@@ -656,13 +631,6 @@
+@@ -679,13 +650,6 @@
      .locals 2
- 
-     .line 112
+
+     .line 114
 -    sget-object v0, Ljp/f4samurai/bridge/NativeBridge;->sAppActivity:Ljp/f4samurai/AppActivity;
 -
 -    new-instance v1, Ljp/f4samurai/bridge/NativeBridge$1;
@@ -77,6 +79,6 @@ index 6012fad..681a112 100644
 -    invoke-direct {v1, p0}, Ljp/f4samurai/bridge/NativeBridge$1;-><init>(Ljava/lang/String;)V
 -
 -    invoke-virtual {v0, v1}, Ljp/f4samurai/AppActivity;->runOnUiThread(Ljava/lang/Runnable;)V
- 
+
      return-void
  .end method

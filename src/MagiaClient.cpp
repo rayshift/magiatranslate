@@ -118,7 +118,7 @@ int *sceneLayerManagerCreateSceneLayer(uintptr_t *sceneLayerManager, BaseSceneLa
         LOGW("Unknown scene triggered. %d", sceneType);
     }
     else {
-        LOGD("Scene layer changed to: %s", BaseSceneLayerTypeStrings[sceneType]);
+        LOGI("Scene layer changed to: %s", BaseSceneLayerTypeStrings[sceneType]);
     }
 
     if (!initialized && sceneType == BaseSceneLayerType::WebSceneLayer) { // Set up everything here
@@ -453,6 +453,16 @@ pthread_mutex_t *http2SessionSetMaxConnectionNum(uintptr_t *session, int max) {
     return http2SessionSetMaxConnectionNumOld(session, max);
 }
 
+uint32_t (*criNcv_GetHardwareSamplingRate_ANDROID_Hooked)();
+
+uint32_t criNcv_GetHardwareSamplingRate_ANDROID() {
+    auto value = criNcv_GetHardwareSamplingRate_ANDROID_Hooked();
+    if (value == 44100) {
+        return 48000;
+    }
+    return value;
+}
+
 void initialization_error(const char* error) {
     LOGE("%s", error);
     auto errorMsg = string_format("A critical error has occurred, MagiaTranslate will not work properly and may crash. Please report this error on GitHub or Discord.\n%s", error);
@@ -508,6 +518,24 @@ void *hook_loop(void *arguments) {
     // For debugging
     //DobbyHook(lookup_symbol(libLocation, "_ZN5http212Http2Session6setURIERKSs"), (void *)setUriDebug, (void **)&setUriDebugOld); - crashes arm32 now.
 
+    // speed fix
+    void *audioSampleRateFix = lookup_symbol(libLocation, "criNcv_GetHardwareSamplingRate_ANDROID");
+
+    if (audioSampleRateFix != nullptr) {
+        LOGD("Found criNcv_GetHardwareSamplingRate_ANDROID at %p.", (void *)cocos2dnodeSetPosition);
+        if (DobbyHook(audioSampleRateFix, (void *)criNcv_GetHardwareSamplingRate_ANDROID, (void **)&criNcv_GetHardwareSamplingRate_ANDROID_Hooked) == RS_SUCCESS) {
+            LOGI("Successfully hooked criNcv_GetHardwareSamplingRate_ANDROID.");
+        }
+        else {
+            initialization_error("Unable to hook criNcv_GetHardwareSamplingRate_ANDROID.");
+            pthread_exit(NULL);
+        }
+    }
+    else {
+        initialization_error("Unable to hook criNcv_GetHardwareSamplingRate_ANDROID.");
+        pthread_exit(NULL);
+    }
+    
 
     // Hooks
     void *cocos2dnodeSetPosition = lookup_symbol(libLocation, "_ZN7cocos2d4Node11setPositionERKNS_4Vec2E"); 
