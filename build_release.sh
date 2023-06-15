@@ -8,6 +8,7 @@ NINJA="${MT_NINJA:-ninja}" # /usr/bin/ninja
 CURL="${MT_CURL:-curl}" # /usr/bin/curl
 JAVA="${MT_JAVA:-java}" # /usr/bin/java
 PYTHON="${MT_PYTHON:-python3}" # /usr/bin/python3.8
+NODEJS="${MT_NODEJS:-node}" # /usr/bin/node
 APKTOOL="${MT_APKTOOL:-apktool_2.6.0.jar}"
 ZIPALIGN="${MT_ZIPALIGN:-zipalign}" # ~/android-sdk/build-tools/zipalign
 APKSIGNER="${MT_APKSIGNER:-apksigner}" # ~/android-sdk/build-tools/apksigner
@@ -75,6 +76,13 @@ _create() {
 	echo "Applying misc patches..."
 	# cp "${BASEDIR}/patches/images/story_ui_sprites00_patch.plist" "${BASEDIR}/build/app/assets/package/story/story_ui_sprites00.plist"
 	# cp "${BASEDIR}/patches/images/story_ui_sprites00_patch.png" "${BASEDIR}/build/app/assets/package/story/story_ui_sprites00.png"
+
+	# Fix low-pitched audio bug since magireco 3.0.1
+	# This was once done with MagiaHook.
+	# However, due to unexplained reason,
+	# that hook made the game engine probabilistically fail to create OpenSLES player,
+	# thus the game would get silenced in that way.
+	"${NODEJS}" "${BASEDIR}/patches/audiofix.js" --wdir "${BASEDIR}/build/app" --overwrite
 
 	cp "${BASEDIR}/patches/koruri-semibold.ttf" "${BASEDIR}/build/app/assets/fonts/koruri-semibold.ttf"
 
