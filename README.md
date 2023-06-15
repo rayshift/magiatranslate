@@ -4,7 +4,7 @@ This is the client source code for Magia Translate, an English translation modif
 
 ## How to build
 - Clone the repository including all submodules `git clone --recurse-submodules https://github.com/rayshift/magiatranslate`
-- Download `android-ndk-r16b` and `android-ndk-r21d` from https://developer.android.com/ndk/downloads and place them somewhere.
+- Download `android-ndk-r21d` from https://developer.android.com/ndk/downloads and place it somewhere.
 - Install Visual Studio along with ninja and cmake plugins for C++. Edit the paths to these executables in the `.bat` files if you are not using VS 2019 Enterprise.
 - Install the python requirements in requirements.txt.
 - Move `sign_example.bat` to `sign.bat` and add your jarsigner keystore, alias and password.
@@ -15,7 +15,6 @@ This is the client source code for Magia Translate, an English translation modif
 Notes:
 - Use `build.bat` if you want a debug build with debug symbols.
 - If your apk has split ABIs (armeabi-v7a/arm64), you will need to move the other `libmadomagi_native.so` into `build/app/lib/{ARCH}`. For example, if the arm7 version of the game is placed in `apk/`, you need to move the `arm8` .so manually, and vice versa.
-- There is no Linux build script currently, but you should be able to build this on Linux if you follow the steps in the `.bat`.
 
 ## Contributing
 Create a pull request with your contributions. Please do not submit any copyrighted content (images) to this repository. 
@@ -24,5 +23,5 @@ Ensure you test your changes on both armeabi-v7a and arm64-v8a. Also test an emu
 `adb.exe -s device install --abi arm64-v8a -r -d .\MagiaTranslate_v2.2.6_v110.apk`
 
 ## Further reading
-- The server source code is currently not public. In order to change the server being used, edit the URLs in the smali file `smali/MagiaNative/app/src/main/java/io/kamihama/magianative/RestClient.smali`. You can also recompile the smali file by loading the MagiaNative project in Android Studio, editing `RestClient.java`, and compiling with this plugin: https://github.com/ollide/intellij-java2smali
+- The server source code is now public at https://github.com/rayshift/kamihama-server - in order to change the server URL, edit the URLs in the smali file `smali/MagiaNative/app/src/main/java/io/kamihama/magianative/RestClient.smali`. You can also recompile the smali file by loading the MagiaNative project in Android Studio, editing `RestClient.java`, and compiling with this plugin: https://github.com/ollide/intellij-java2smali
 - The hooking library used is https://github.com/jmpews/Dobby. 
