@@ -25,11 +25,11 @@ _errorexit() {
 echo "Doing zipalign..."
 "${ZIPALIGN}" -f -p 4 "${APK}" "${APK}.tmp"
 [ "$?" -ne "0" ] && _errorexit 3 "Failed to zipalign!"
-
-echo "Doing apksign..."
-"${APKSIGNER}" sign --ks "${KEYSTORE}" --ks-pass pass:changeme --ks-key-alias name "${APK}.tmp"
-[ "$?" -ne "0" ] && _errorexit 4 "Failed to apksign!"
-
 echo "Removing tmp file..."
 mv "${APK}.tmp" "${APK}"
+
+echo "Doing apksign..."
+"${APKSIGNER}" sign --ks "${KEYSTORE}" --ks-pass pass:changeme --ks-key-alias name "${APK}"
+[ "$?" -ne "0" ] && _errorexit 4 "Failed to apksign!"
+
 exit 0
