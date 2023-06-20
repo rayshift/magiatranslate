@@ -14,7 +14,10 @@ _deps
 .idea/
 apk/*.apk
 apk/*.old
+armv7apk/*.apk
+armv7apk/*.old
 *.keystore
+*.jks
 
 # Prerequisites
 *.d

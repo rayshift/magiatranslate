@@ -13,6 +13,8 @@ APKTOOL="${MT_APKTOOL:-apktool_2.6.0.jar}"
 ZIPALIGN="${MT_ZIPALIGN:-zipalign}" # ~/android-sdk/build-tools/zipalign
 APKSIGNER="${MT_APKSIGNER:-apksigner}" # ~/android-sdk/build-tools/apksigner
 
+ARMV7SRCAPK="${ARMV7SRCAPK:-${BASEDIR}/armv7apk/vanilla-armv7.apk}"
+
 # arg-based
 SRCAPK="${1:-${BASEDIR}/apk/vanilla.apk}"
 VERSION="${2:-v0.50}"
@@ -25,6 +27,11 @@ RESULT="${BASEDIR}/build/io.kamihama.magiatranslate.${VERSION}.apk"
 _pre() {
 	[ -f "${SRCAPK}" ] || _errorexit 5 "Did not find MagiReco APK! Tried path: ${SRCAPK}"
 	echo "Found apk ${SRCAPK}"
+
+	if [[ "${TARCHS}" == *"armeabi-v7a"* ]]; then
+		[ -f "${ARMV7SRCAPK}" ] || _errorexit 5 "Did not find ARMv7 MagiReco APK! Tried path: ${ARMV7SRCAPK}"
+		echo "Found ARMv7 apk ${ARMV7SRCAPK}"
+	fi
 
 	[ -d "${NDK}" ] || _errorexit 6 "NDK directory does not exist! Tried path: ${NDK}"
 	NDK=$(realpath "${NDK}")
@@ -58,6 +65,7 @@ _get_apktool() {
 _create() {
 	echo "Removing existing build files..."
 	rm -rf "${BASEDIR}/build/app"
+	rm -rf "${BASEDIR}/build/armv7/app"
 	echo "Running apktool..."
 	${JAVA} -jar "${BASEDIR}/build/${APKTOOL}" d "${SRCAPK}" -o "${BASEDIR}/build/app/"
 	mkdir -p "${BASEDIR}/build/app/smali/com/loadLib"
@@ -66,13 +74,24 @@ _create() {
 		mkdir -p "${BASEDIR}/build/app/lib/${tarch}"
 	done
 
+	if [[ "${TARCHS}" == *"armeabi-v7a"* ]]; then
+		echo "Extracting ARMv7 lib..."
+		${JAVA} -jar "${BASEDIR}/build/${APKTOOL}" d "${ARMV7SRCAPK}" --no-src --no-res -o "${BASEDIR}/build/armv7/app"
+		mv "${BASEDIR}/build/armv7/app/lib/armeabi-v7a/"* "${BASEDIR}/build/app/lib/armeabi-v7a/"
+		rm -rf "${BASEDIR}/build/armv7/app"
+	fi
+
 	echo "Applying smali patches..."
-	git -C "${BASEDIR}" apply --stat "${BASEDIR}/patches/NativeBridge.patch"
-	git -C "${BASEDIR}" apply --stat "${BASEDIR}/patches/Hook.patch"
-	git -C "${BASEDIR}" apply --stat "${BASEDIR}/patches/Backtrace.patch"
-	git -C "${BASEDIR}" apply "${BASEDIR}/patches/NativeBridge.patch"
-	git -C "${BASEDIR}" apply "${BASEDIR}/patches/Hook.patch"
-	git -C "${BASEDIR}" apply "${BASEDIR}/patches/Backtrace.patch"
+	local PATCHES=(
+		"NativeBridge.patch"
+		"Hook.patch"
+		"Backtrace.patch"
+	)
+	local PATCH
+	for PATCH in "${PATCHES[@]}"; do
+		git -C "${BASEDIR}" apply --stat "${BASEDIR}/patches/${PATCH}"
+		git -C "${BASEDIR}" apply "${BASEDIR}/patches/${PATCH}"
+	done
 	echo "Applying misc patches..."
 	# cp "${BASEDIR}/patches/images/story_ui_sprites00_patch.plist" "${BASEDIR}/build/app/assets/package/story/story_ui_sprites00.plist"
 	# cp "${BASEDIR}/patches/images/story_ui_sprites00_patch.png" "${BASEDIR}/build/app/assets/package/story/story_ui_sprites00.png"

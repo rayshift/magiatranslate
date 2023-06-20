@@ -13,7 +13,7 @@ This is the client source code for Magia Translate, an English translation modif
 - Run `build_release.bat`.
 
 Notes:
-- Use `build.bat` if you want a debug build with debug symbols.
+- Use `build_debug.bat` if you want a debug build with debug symbols.
 - If your apk has split ABIs (armeabi-v7a/arm64), you will need to move the other `libmadomagi_native.so` into `build/app/lib/{ARCH}`. For example, if the arm7 version of the game is placed in `apk/`, you need to move the `arm8` .so manually, and vice versa.
 
 ## Contributing
