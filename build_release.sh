@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 BASEDIR="$(realpath "$(dirname "${0}")")"
 
 # env-based

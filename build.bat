@@ -30,6 +30,10 @@ goto errorexit
 pause
 
 :start
+if "%JAVA_HOME%" == "" (
+    echo JAVA_HOME is not set
+    goto errorexit
+)
 set ndk="C:/Android/android-ndk-r21d/"
 set /p ndk="Enter ndk Location [%ndk%]: "
 set cmake="C:/Android/sdk/cmake/3.22.1/bin/cmake.exe"
@@ -112,6 +116,7 @@ call copy /Y "%~dp0\patches\koruri-semibold.ttf" "%~dp0\build\app\assets\fonts\k
 
 echo Updating sprites and AndroidManifest.xml...
 call python3 buildassets.py
+if errorlevel 1 goto errorexit
 
 :build
 echo Copying new smali files...
@@ -161,6 +166,7 @@ CALL "%JAVA_HOME%\bin\java.exe" -jar "%~dp0\build\apktool_2.4.1.jar" b "%~dp0\bu
 :signandupload
 echo Signing apk...
 call "%~dp0\sign.bat"
+if errorlevel 1 goto errorexit
 echo Finished!
 goto exit
 
