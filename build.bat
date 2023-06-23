@@ -126,7 +126,12 @@ if errorlevel 1 goto errorexit
 call copy /Y "%~dp0\patches\koruri-semibold.ttf" "%~dp0\build\app\assets\fonts\koruri-semibold.ttf"
 
 echo Updating sprites and AndroidManifest.xml...
-call python3 buildassets.py
+REM handle fake python3 which does nothing but redirects to microsoft store
+set python=python
+python3 --version && set python=python3
+cd /d "%~dp0"
+REM %python% -m pip install -r requirements.txt
+%python% buildassets.py
 if errorlevel 1 goto errorexit
 
 :build
