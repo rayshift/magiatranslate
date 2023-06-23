@@ -17,6 +17,9 @@
 #include "libmadomagi.h"
 #include "rest/MagiaRest.h"
 
+#define RT_FAILED -1
+#define RS_SUCCESS 0
+
 const char* libName = "libmadomagi_native.so";
 const char* hookName = "libuwasa.so";
 

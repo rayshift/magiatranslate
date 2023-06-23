@@ -61,7 +61,7 @@ add_library( # Sets the name of the library.
 
 find_library(ANDROID_LOG_LIB log)
 target_link_libraries(${TARGET_NAME} PRIVATE ${ANDROID_LOG_LIB})
-target_link_libraries(${TARGET_NAME} PRIVATE dobby)
+target_link_libraries(${TARGET_NAME} PRIVATE dobby_static)
 target_link_libraries(${TARGET_NAME} PRIVATE nlohmann_json::nlohmann_json)
 
 
