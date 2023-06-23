@@ -47,10 +47,21 @@ set apksigner="C:/Android/sdk/build-tools/34.0.0/apksigner.bat"
 set /p apksigner="Enter apksigner Location [%apksigner%]: "
 
 if not exist "%~dp0\build" mkdir "%~dp0\build"
-if exist "%~dp0\build\apktool_2.4.1.jar" goto apktoolexists
-echo Downloading apktool...
-CALL curl -A "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64)" -o "%~dp0\build\apktool_2.4.1.jar" -L "https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.4.1.jar"
 
+set apktooljar=apktool_2.7.0.jar
+set apktoolsha256=c11b5eb518d9ac2ab18e959cbe087499079072b04d567cdcae5ceb447f9a7e7d
+if exist "%~dp0\build\%apktooljar%" goto checkapktoolhash
+:downloadapktool
+echo Downloading apktool...
+CALL curl -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36" -o "%~dp0\build\%apktooljar%" -L "https://bitbucket.org/iBotPeaches/apktool/downloads/%apktooljar%"
+:checkapktoolhash
+certutil -hashfile "%~dp0\build\%apktooljar%" SHA256 | findstr /i %apktoolsha256% && goto apktoolexists
+echo SHA256 mismatch for "%~dp0\build\%apktooljar%"set deleteold=N
+set redownloadapktool=N
+set /p redownloadapktool="Try delete and redownload apktool (uppercase Y/[N])? "
+if %redownloadapktool% NEQ Y goto errorexit
+del /f "%~dp0\build\%apktooljar%"
+goto downloadapktool
 :apktoolexists
 if not exist "%~dp0\build\app\" goto create
 
@@ -63,12 +74,12 @@ echo Removing existing build files...
 rmdir /S /Q "%~dp0\build\app\"
 rmdir /S /Q "%~dp0\build\armv7\app\"
 echo Running apktool...
-CALL "%JAVA_HOME%\bin\java.exe" -jar "%~dp0\build\apktool_2.4.1.jar" d "%apk%" -o "%~dp0\build\app"
+CALL "%JAVA_HOME%\bin\java.exe" -jar "%~dp0\build\%apktooljar%" d "%apk%" -o "%~dp0\build\app"
 mkdir "%~dp0\build\app\smali\com\loadLib\"
 if not exist "%~dp0\build\app\lib\armeabi-v7a" mkdir "%~dp0\build\app\lib\armeabi-v7a"
 if not exist "%~dp0\build\app\lib\arm64-v8a" mkdir "%~dp0\build\app\lib\arm64-v8a"
 echo Extracting ARMv7 lib...
-CALL "%JAVA_HOME%\bin\java.exe" -jar "%~dp0\build\apktool_2.4.1.jar" d "%armv7apk%" --no-src --no-res -o "%~dp0\build\armv7\app"
+CALL "%JAVA_HOME%\bin\java.exe" -jar "%~dp0\build\%apktooljar%" d "%armv7apk%" --no-src --no-res -o "%~dp0\build\armv7\app"
 move "%~dp0\build\armv7\app\lib\armeabi-v7a\*.*" "%~dp0\build\app\lib\armeabi-v7a\"
 if errorlevel 1 goto errorexit
 rmdir /S /Q "%~dp0\build\armv7\app\"
@@ -161,7 +172,7 @@ call copy /Y "%~dp0\build\armeabi-v7a\libuwasa.so" "%~dp0\build\app\lib\armeabi-
 call copy /Y "%~dp0\build\arm64-v8a\libuwasa.so" "%~dp0\build\app\lib\arm64-v8a\libuwasa.so"
 
 echo Rebuilding APK...
-CALL "%JAVA_HOME%\bin\java.exe" -jar "%~dp0\build\apktool_2.4.1.jar" b "%~dp0\build\app" -o "%~dp0\build\magia_patched.apk"
+CALL "%JAVA_HOME%\bin\java.exe" -jar "%~dp0\build\%apktooljar%" b "%~dp0\build\app" -o "%~dp0\build\magia_patched.apk"
 
 :signandupload
 echo Signing apk...
