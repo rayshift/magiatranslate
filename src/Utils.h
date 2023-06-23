@@ -13,8 +13,13 @@
 #include <memory>
 #include <stdexcept>
 
+#ifdef NDEBUG
+#define RELEASE_BUILD
+#else
+#define DEBUG_BUILD
+#endif
 
-#if DEBUG
+#ifdef DEBUG_BUILD
 #define LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, "MagiaHook", __VA_ARGS__)
 #else 
 #define LOGD(...)  do {} while(false)

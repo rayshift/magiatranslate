@@ -49,7 +49,7 @@ bool initialized = false;
 const std::string assetBase = "/magica/resource";
 const std::string assetTrunk = "/download/asset/master";
 const std::string assetScenario = "/resource/scenario";
-std::vector<std::string> urlEndpoints(3);
+std::vector<std::shared_ptr<std::string>> urlEndpoints(3);
 
 const std::string koruriFont("fonts/koruri-semibold.ttf");
 
@@ -62,7 +62,7 @@ void *(*setPositionHooked)(uintptr_t label, cocos2d::Vec2 const& position);
 void *(*setMaxLineWidthHooked)(uintptr_t label, float length);
 void *(*setDimensionsHooked)(uintptr_t label, float width, float a3);
 
-std::string (*urlConfigResourceHooked)(void* a1, UrlConfigResourceType type); // There is also api, chat, web, etc for other endpoints
+const std::string* (*urlConfigResourceHooked)(void* a1, UrlConfigResourceType type); // There is also api, chat, web, etc for other endpoints
 
 //void* urlConfig_ImplObj = nullptr;
 
@@ -168,10 +168,11 @@ int *sceneLayerManagerCreateSceneLayer(uintptr_t *sceneLayerManager, BaseSceneLa
                 //std::string assetNameScriptProxy(assetNameScript.c_str());
 
                 LOGD("Setting endpoint URLs.");
+                LOGD("%s", assetNameScript.c_str());
 
-                urlEndpoints.at(UrlConfigResourceType::BaseUrl) = assetNameBase;
-                urlEndpoints.at(UrlConfigResourceType::TrunkUrl) = assetNameFull;
-                urlEndpoints.at(UrlConfigResourceType::ScenarioUrl) = assetNameScript;
+                urlEndpoints.at(UrlConfigResourceType::BaseUrl) = std::make_shared<std::string>(assetNameBase);
+                urlEndpoints.at(UrlConfigResourceType::TrunkUrl) = std::make_shared<std::string>(assetNameFull);
+                urlEndpoints.at(UrlConfigResourceType::ScenarioUrl) = std::make_shared<std::string>(assetNameScript);
                 LOGD("Finished setting endpoint URLs.");
                 break;
             }
@@ -187,12 +188,14 @@ int *sceneLayerManagerCreateSceneLayer(uintptr_t *sceneLayerManager, BaseSceneLa
 }
 
 // Change function to fetch resource URLs
-std::string urlConfigResource(void* a1, UrlConfigResourceType type) {
+const std::string* urlConfigResource(void* a1, UrlConfigResourceType type) {
     LOGD("Fetching URL config resource %d", (int)type);
     if (type < UrlConfigResourceType::UrlConfigResourceTypeMaxValue) {
         try {
-            if (!urlEndpoints.at(type).empty()) {
-                return urlEndpoints.at(type);
+            if (urlEndpoints.at(type) != nullptr && urlEndpoints.at(type).get() != nullptr) {
+                auto url = (urlEndpoints.at(type)).get();
+                LOGD("URL: %s", url->c_str());
+                return url;
             }
             else {
                 LOGW("Empty endpoint found for endpoint type %d!", (int)type);
@@ -523,7 +526,7 @@ void *hook_loop(void *arguments) {
     void *audioSampleRateFix = lookup_symbol(libLocation, "criNcv_GetHardwareSamplingRate_ANDROID");
 
     if (audioSampleRateFix != nullptr) {
-        LOGD("Found criNcv_GetHardwareSamplingRate_ANDROID at %p.", (void *)cocos2dnodeSetPosition);
+        LOGD("Found criNcv_GetHardwareSamplingRate_ANDROID at %p.", (void *)audioSampleRateFix);
         if (DobbyHook(audioSampleRateFix, (void *)criNcv_GetHardwareSamplingRate_ANDROID, (void **)&criNcv_GetHardwareSamplingRate_ANDROID_Hooked) == RS_SUCCESS) {
             LOGI("Successfully hooked criNcv_GetHardwareSamplingRate_ANDROID.");
         }
