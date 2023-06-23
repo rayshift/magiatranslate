@@ -125,7 +125,6 @@ _build() {
 
 		echo "Copying libraries for ${tarch}..."
 		cp "${BASEDIR}/build/${tarch}/libuwasa.so" "${BASEDIR}/build/app/lib/${tarch}/libuwasa.so"
-		cp "${BASEDIR}/abiproxy/build/${tarch}/libabiproxy.so" "${BASEDIR}/build/app/lib/${tarch}/libabiproxy.so"
 	done
 
 	echo "Rebuilding APK..."

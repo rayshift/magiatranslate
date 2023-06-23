@@ -65,16 +65,6 @@ target_link_libraries(${TARGET_NAME} PRIVATE dobby)
 target_link_libraries(${TARGET_NAME} PRIVATE nlohmann_json::nlohmann_json)
 
 
-if (CMAKE_ANDROID_ARCH_ABI STREQUAL "armeabi-v7a")
-target_link_libraries(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/abiproxy/build/armeabi-v7a/libabiproxy.so)
-message(STATUS "Linking for armeabi-v7a")
-endif (CMAKE_ANDROID_ARCH_ABI STREQUAL "armeabi-v7a")
-
-if (CMAKE_ANDROID_ARCH_ABI STREQUAL "arm64-v8a")
-target_link_libraries(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/abiproxy/build/arm64-v8a/libabiproxy.so)
-message(STATUS "Linking for arm64-v8a")
-endif (CMAKE_ANDROID_ARCH_ABI STREQUAL "arm64-v8a")
-
 macro(SET_OPTION option value)
   set(${option} ${value} CACHE INTERNAL "" FORCE)
 endmacro()

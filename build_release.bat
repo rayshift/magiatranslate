@@ -87,9 +87,7 @@ if errorlevel 1 goto errorexit
 
 echo Copying libraries...
 call copy /Y %~dp0\build\armeabi-v7a\libuwasa.so %~dp0\build\app\lib\armeabi-v7a\libuwasa.so
-call copy /Y %~dp0\abiproxy\build\armeabi-v7a\libabiproxy.so %~dp0\build\app\lib\armeabi-v7a\libabiproxy.so
 call copy /Y %~dp0\build\arm64-v8a\libuwasa.so %~dp0\build\app\lib\arm64-v8a\libuwasa.so
-call copy /Y %~dp0\abiproxy\build\arm64-v8a\libabiproxy.so %~dp0\build\app\lib\arm64-v8a\libabiproxy.so
 
 echo Rebuilding APK...
 call java -jar %~dp0\build\apktool_2.4.1.jar b %~dp0\build\app\ -o %~dp0\build\magia_patched.apk

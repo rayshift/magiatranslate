@@ -15,8 +15,6 @@
 #include "Config.h"
 #include <cocos2d.h>
 #include "libmadomagi.h"
-#include "magia/StringsProxy.h"
-#include "magia/DialogueBox.h"
 #include "rest/MagiaRest.h"
 
 const char* libName = "libmadomagi_native.so";
@@ -51,9 +49,9 @@ bool initialized = false;
 const std::string assetBase = "/magica/resource";
 const std::string assetTrunk = "/download/asset/master";
 const std::string assetScenario = "/resource/scenario";
-void* urlEndpoints[] = {nullptr, nullptr, nullptr};
+std::vector<std::string> urlEndpoints(3);
 
-StringsProxy* koruriFont = new StringsProxy("fonts/koruri-semibold.ttf");
+const std::string koruriFont("fonts/koruri-semibold.ttf");
 
 typedef int *(*setUrlType)(int *);
 typedef int *(*setResourceType)(int *, unsigned int *);
@@ -64,7 +62,7 @@ void *(*setPositionHooked)(uintptr_t label, cocos2d::Vec2 const& position);
 void *(*setMaxLineWidthHooked)(uintptr_t label, float length);
 void *(*setDimensionsHooked)(uintptr_t label, float width, float a3);
 
-void *(*urlConfigResourceHooked)(void* a1, UrlConfigResourceType type); // There is also api, chat, web, etc for other endpoints
+std::string (*urlConfigResourceHooked)(void* a1, UrlConfigResourceType type); // There is also api, chat, web, etc for other endpoints
 
 //void* urlConfig_ImplObj = nullptr;
 
@@ -165,16 +163,15 @@ int *sceneLayerManagerCreateSceneLayer(uintptr_t *sceneLayerManager, BaseSceneLa
                 const std::string assetNameFull = endpointUrl + assetBase + assetTrunk;
                 const std::string assetNameScript = endpointUrl + assetBase + assetTrunk + assetScenario;
 
-                // new keyword to stop freeing
-                StringsProxy* assetNameBaseProxy = new StringsProxy(assetNameBase.c_str());
-                StringsProxy* assetNameFullProxy = new StringsProxy(assetNameFull.c_str());
-                StringsProxy* assetNameScriptProxy = new StringsProxy(assetNameScript.c_str());
+                //std::string assetNameBaseProxy(assetNameBase.c_str());
+                //std::string assetNameFullProxy(assetNameFull.c_str());
+                //std::string assetNameScriptProxy(assetNameScript.c_str());
 
                 LOGD("Setting endpoint URLs.");
 
-                urlEndpoints[UrlConfigResourceType::BaseUrl] = (void*)assetNameBaseProxy->ptr();
-                urlEndpoints[UrlConfigResourceType::TrunkUrl] = (void*)assetNameFullProxy->ptr();
-                urlEndpoints[UrlConfigResourceType::ScenarioUrl] = (void*)assetNameScriptProxy->ptr();
+                urlEndpoints.at(UrlConfigResourceType::BaseUrl) = assetNameBase;
+                urlEndpoints.at(UrlConfigResourceType::TrunkUrl) = assetNameFull;
+                urlEndpoints.at(UrlConfigResourceType::ScenarioUrl) = assetNameScript;
                 LOGD("Finished setting endpoint URLs.");
                 break;
             }
@@ -190,22 +187,27 @@ int *sceneLayerManagerCreateSceneLayer(uintptr_t *sceneLayerManager, BaseSceneLa
 }
 
 // Change function to fetch resource URLs
-void* urlConfigResource(void* a1, UrlConfigResourceType type) {
+std::string urlConfigResource(void* a1, UrlConfigResourceType type) {
     LOGD("Fetching URL config resource %d", (int)type);
     if (type < UrlConfigResourceType::UrlConfigResourceTypeMaxValue) {
-        if (urlEndpoints[type] != nullptr) {
-            return (void *)urlEndpoints[type];
+        try {
+            if (!urlEndpoints.at(type).empty()) {
+                return urlEndpoints.at(type);
+            }
+            else {
+                LOGW("Empty endpoint found for endpoint type %d!", (int)type);
+            }
         }
-        else {
-            LOGW("Nullptr endpoint found for endpoint type %d!", (int)type);
+        catch (std::out_of_range const& exc) {
+            LOGW("Out of range for endpoint type %d!", (int)type);
         }
     }
     return urlConfigResourceHooked(a1, type);
 }
 
 
-void* (*cocosCreateLabelHooked)(const uintptr_t* textPtr, const uintptr_t* fontPtr, float textSize, cocos2d::Size const& cocosSize, cocos2d::TextHAlignment hAlign, cocos2d::TextVAlignment vAlign);
-void* cocosCreateLabel(const uintptr_t* textPtr, const uintptr_t* fontPtr, float textSize, cocos2d::Size const& cocosSize, cocos2d::TextHAlignment hAlign, cocos2d::TextVAlignment vAlign) {
+void* (*cocosCreateLabelHooked)(const uintptr_t* textPtr, const std::string &fontPtr, float textSize, cocos2d::Size const& cocosSize, cocos2d::TextHAlignment hAlign, cocos2d::TextVAlignment vAlign);
+void* cocosCreateLabel(const uintptr_t* textPtr, const std::string &fontPtr, float textSize, cocos2d::Size const& cocosSize, cocos2d::TextHAlignment hAlign, cocos2d::TextVAlignment vAlign) {
     uintptr_t addr = reinterpret_cast<uintptr_t>(__builtin_extract_return_addr(__builtin_return_address(0)));
     LOGD("Label created at %p (%p), size %.1f.", (void*) addr, (void*)(addr - libBase), textSize);
     if (storyMessageUnitCreateMessageAreaOffset != 0 && addr >= storyMessageUnitCreateMessageAreaOffset) {
@@ -215,7 +217,7 @@ void* cocosCreateLabel(const uintptr_t* textPtr, const uintptr_t* fontPtr, float
             if (textSize == 27.0) {
                 textSize = 30.0;
             }
-            return cocosCreateLabelHooked(textPtr, koruriFont->ptr(), textSize, cocosSize, hAlign, vAlign);
+            return cocosCreateLabelHooked(textPtr, koruriFont, textSize, cocosSize, hAlign, vAlign);
         }
     }
     if (storyNarrationUnitCreateLabelOffset != 0 && addr >= storyNarrationUnitCreateLabelOffset) {
@@ -223,7 +225,7 @@ void* cocosCreateLabel(const uintptr_t* textPtr, const uintptr_t* fontPtr, float
 
         if (difference <= 0x200) { // 0x8e
             LOGD("Setting new narration text font. Difference: %p", (void*)difference);
-            return cocosCreateLabelHooked(textPtr, koruriFont->ptr(), textSize, cocosSize, hAlign, vAlign);
+            return cocosCreateLabelHooked(textPtr, koruriFont, textSize, cocosSize, hAlign, vAlign);
         }
     }
     if (initCenterWidthOutline != 0 && addr >= initCenterWidthOutline) {
@@ -232,7 +234,7 @@ void* cocosCreateLabel(const uintptr_t* textPtr, const uintptr_t* fontPtr, float
         if (difference <= 0x200) {
             LOGD("Setting new home text font and size.");
             textSize = textSize * 0.85;
-            return cocosCreateLabelHooked(textPtr, koruriFont->ptr(), textSize, cocosSize, hAlign, vAlign);
+            return cocosCreateLabelHooked(textPtr, koruriFont, textSize, cocosSize, hAlign, vAlign);
         }
     }
     if (storyLogUnitAddMessageOffset != 0 && addr >= storyLogUnitAddMessageOffset) {
@@ -240,14 +242,14 @@ void* cocosCreateLabel(const uintptr_t* textPtr, const uintptr_t* fontPtr, float
 
         if (difference <= 0x640) { // 0xec, 0x54e
             LOGD("Setting new log text font. Difference: %p", (void*)difference);
-            return cocosCreateLabelHooked(textPtr, koruriFont->ptr(), textSize, cocosSize, hAlign, vAlign);
+            return cocosCreateLabelHooked(textPtr, koruriFont, textSize, cocosSize, hAlign, vAlign);
         }
     }
     if (storyLogUnitAddNarrationOffset != 0 && addr >= storyLogUnitAddNarrationOffset) {
         uintptr_t difference = addr - storyLogUnitAddNarrationOffset;
         if (difference <= 0x640) { // 0x43e, 0x5b0
             LOGD("Setting new log text font (narration). Difference: %p", (void*)difference);
-            return cocosCreateLabelHooked(textPtr, koruriFont->ptr(), textSize, cocosSize, hAlign, vAlign);
+            return cocosCreateLabelHooked(textPtr, koruriFont, textSize, cocosSize, hAlign, vAlign);
         }
     }
     return cocosCreateLabelHooked(textPtr, fontPtr, textSize, cocosSize, hAlign, vAlign);
@@ -433,12 +435,11 @@ cocos2d::Size lbGetViewPositionNew(float x, float y) {
 }
 
 
-pthread_mutex_t *(*setUriDebugOld)(uintptr_t a1, uintptr_t st);
-pthread_mutex_t *setUriDebug(uintptr_t a1, uintptr_t stri) {
+pthread_mutex_t *(*setUriDebugOld)(uintptr_t a1, const std::string &st);
+pthread_mutex_t *setUriDebug(uintptr_t a1, const std::string &stri) {
     auto mut = setUriDebugOld(a1, stri);
 
-    auto y = StringsProxy(stri);
-    auto outstr = y.c_str();
+    auto outstr = stri.c_str();
     LOGI("Uri base set: %s", outstr);
     return mut;
 }
