@@ -17,6 +17,8 @@ APKSIGNER="${MT_APKSIGNER:-apksigner}" # ~/android-sdk/build-tools/apksigner
 
 ARMV7SRCAPK="${ARMV7SRCAPK:-${BASEDIR}/armv7apk/vanilla-armv7.apk}"
 
+MT_AUDIOFIX_3_0_1="${MT_AUDIOFIX_3_0_1:-Y}"
+
 # arg-based
 SRCAPK="${1:-${BASEDIR}/apk/vanilla.apk}"
 VERSION="${2:-v0.50}"
@@ -98,12 +100,14 @@ _create() {
 	# cp "${BASEDIR}/patches/images/story_ui_sprites00_patch.plist" "${BASEDIR}/build/app/assets/package/story/story_ui_sprites00.plist"
 	# cp "${BASEDIR}/patches/images/story_ui_sprites00_patch.png" "${BASEDIR}/build/app/assets/package/story/story_ui_sprites00.png"
 
-	# Fix low-pitched audio bug since magireco 3.0.1
-	# This was once done with MagiaHook.
-	# However, due to unexplained reason,
-	# that hook made the game engine probabilistically fail to create OpenSLES player,
-	# thus the game would get silenced in that way.
-	"${NODEJS}" "${BASEDIR}/patches/audiofix.js" --wdir "${BASEDIR}/build/app" --overwrite
+	if [[ "${MT_AUDIOFIX_3_0_1}" == "Y" ]] || [[ "${MT_AUDIOFIX_3_0_1}" == "y" ]] || [[ "${MT_AUDIOFIX_3_0_1}" == "true" ]]; then
+		# Fix low-pitched audio bug since magireco 3.0.1
+		# This was once done with MagiaHook.
+		# However, due to unexplained reason,
+		# that hook made the game engine probabilistically fail to create OpenSLES player,
+		# thus the game would get silenced in that way.
+		"${NODEJS}" "${BASEDIR}/patches/audiofix.js" --wdir "${BASEDIR}/build/app" --overwrite
+	fi
 
 	cp "${BASEDIR}/patches/koruri-semibold.ttf" "${BASEDIR}/build/app/assets/fonts/koruri-semibold.ttf"
 

@@ -113,15 +113,17 @@ echo Applying misc patches...
 REM call copy /Y "%~dp0\patches\images\story_ui_sprites00_patch.plist" "%~dp0\build\app\assets\package\story\story_ui_sprites00.plist"
 REM call copy /Y "%~dp0\patches\images\story_ui_sprites00_patch.png" "%~dp0\build\app\assets\package\story\story_ui_sprites00.png"
 
-REM Fix low-pitched audio bug since magireco 3.0.1
-REM This was once done with MagiaHook.
-REM However, due to unexplained reason,
-REM that hook made the game engine probabilistically fail to create OpenSLES player,
-REM thus the game would get silenced in that way.
-echo Please copy 64bit apk.
-pause
-node "%~dp0/patches/audiofix.js" --wdir "%~dp0/build/app" --overwrite
-if errorlevel 1 goto errorexit
+if "%MT_AUDIOFIX_3_0_1%" == "" set MT_AUDIOFIX_3_0_1=Y
+if "%MT_AUDIOFIX_3_0_1%" == "y" set MT_AUDIOFIX_3_0_1=Y
+if "%MT_AUDIOFIX_3_0_1%" == "Y" (
+    REM Fix low-pitched audio bug since magireco 3.0.1
+    REM This was once done with MagiaHook.
+    REM However, due to unexplained reason,
+    REM that hook made the game engine probabilistically fail to create OpenSLES player,
+    REM thus the game would get silenced in that way.
+    node "%~dp0/patches/audiofix.js" --wdir "%~dp0/build/app" --overwrite
+    if errorlevel 1 goto errorexit
+)
 
 call copy /Y "%~dp0\patches\koruri-semibold.ttf" "%~dp0\build\app\assets\fonts\koruri-semibold.ttf"
 
