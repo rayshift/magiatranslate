@@ -1,0 +1,89 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ "master", "dev" ]
+    tags: [ "*" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        cache: gradle
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.11"
+        cache: 'pip'
+    - run: pip install -r requirements.txt
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2.5.2
+      with:
+        node-version: 18.16.1
+    - name: Grant execute permission
+      run: chmod +x ci_download_src_apk.sh ci_install_deps.sh ci_build.sh build_release.sh
+    - name: Restore cached dependencies
+      id: restore-cached-dependencies
+      uses: actions/cache/restore@v3
+      with:
+        path: deps
+        key: ${{ runner.os }}-cached-dependencies-${{ hashFiles('ci_versions/deps.sh') }}
+    - name: Install dependencies
+      if: steps.restore-cached-dependencies.outputs.cache-hit != 'true'
+      run: ./ci_install_deps.sh
+    - name: Save dependencies to cache
+      if: steps.restore-cached-dependencies.outputs.cache-hit != 'true'
+      id: save-dependencies-to-cache
+      uses: actions/cache/save@v3
+      with:
+        path: deps
+        key: ${{ runner.os }}-cached-dependencies-${{ hashFiles('ci_versions/deps.sh') }}
+    - name: Restore cached source APK
+      id: restore-cached-src-apk
+      uses: actions/cache/restore@v3
+      with:
+        path: |
+          apk
+          armv7apk
+        key: ${{ runner.os }}-cached-src-apk-${{ hashFiles('ci_versions/src_apk.sh') }}
+    - name: Download source APK
+      if: steps.restore-cached-src-apk.outputs.cache-hit != 'true'
+      run: ./ci_download_src_apk.sh
+    - name: Save source APK to cache
+      if: steps.restore-cached-src-apk.outputs.cache-hit != 'true'
+      id: save-src-apk-to-cache
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          apk
+          armv7apk
+        key: ${{ runner.os }}-cached-src-apk-${{ hashFiles('ci_versions/src_apk.sh') }}
+    - name: Run ci_build.sh
+      run: ./ci_build.sh
+      env:
+        KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        KS_PASS: ${{ secrets.KS_PASS }}
+        KS_KEY_ALIAS: ${{ secrets.KS_KEY_ALIAS }}
+        KEY_PASS: ${{ secrets.KEY_PASS }}
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: built_apk
+        path: ./*.apk
+    - name: Release Build
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          ${{ env.MAIN_APK }}
+          ${{ env.FAILSAFE_APK }}
