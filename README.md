@@ -4,12 +4,11 @@ This is the client source code for Magia Translate, an English translation modif
 
 ## How to build
 - Clone the repository including all submodules `git clone --recurse-submodules https://github.com/rayshift/magiatranslate`
-- Download `android-ndk-r21d` from https://developer.android.com/ndk/downloads and place it somewhere.
-- Install Visual Studio along with ninja and cmake plugins for C++. Edit the paths to these executables in the `.bat` files if you are not using VS 2019 Enterprise.
+- If you don't have Android Studio installed, you may download [command line tools](https://developer.android.com/studio#command-tools) only.
+- Downlad `NDK` (`ndk;25.2.9519653`), `CMake` (`cmake;3.22.1`) and `Android SDK Build-Tools` (`build-tools;33.0.2`) with [sdkmanager](https://developer.android.com/studio/command-line/sdkmanager), or just use its GUI to install them if you have Android Studio installed.
 - Install the python requirements in requirements.txt.
 - Move `sign_example.bat` to `sign.bat` and add your jarsigner keystore, alias and password.
-- Build abiproxy by running `abiproxy/build_release.bat`.
-- Place your magia record APK in the `apk` directory.
+- Place your magia record APKs in the `apk` and `armv7apk` directory.
 - Run `build_release.bat`.
 
 Notes:
