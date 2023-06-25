@@ -50,6 +50,8 @@ REM This was once done with MagiaHook.
 REM However, due to unexplained reason,
 REM that hook made the game engine probabilistically fail to create OpenSLES player,
 REM thus the game would get silenced in that way.
+echo Please copy 64bit apk.
+pause
 node "%~dp0/patches/audiofix.js" --wdir "%~dp0/build/app" --overwrite
 
 call copy /Y "%~dp0\patches\koruri-semibold.ttf" "%~dp0\build\app\assets\fonts\koruri-semibold.ttf"
