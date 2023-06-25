@@ -193,4 +193,5 @@ echo An error has occurred, exiting.
 goto exit
 
 :exit
+cd /d "%~dp0"
 pause
