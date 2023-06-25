@@ -34,7 +34,7 @@ if "%JAVA_HOME%" == "" (
     echo JAVA_HOME is not set
     goto errorexit
 )
-set ndk="C:/Android/android-ndk-r21d/"
+set ndk="C:/Android/Sdk/ndk/23.1.7779620"
 set /p ndk="Enter ndk Location [%ndk%]: "
 set cmake="C:/Android/sdk/cmake/3.22.1/bin/cmake.exe"
 set /p cmake="Enter cmake Location [%cmake%]: "

@@ -22,7 +22,7 @@ MT_AUDIOFIX_3_0_1="${MT_AUDIOFIX_3_0_1:-Y}"
 # arg-based
 SRCAPK="${1:-${BASEDIR}/apk/vanilla.apk}"
 VERSION="${2:-v0.50}"
-NDK="${3:-${BASEDIR}/ndk/android-ndk-r21e}"
+NDK="${3:-${BASEDIR}/Android/Sdk/ndk/23.1.7779620}"
 FORCEOW="${4:-true}"
 TARCHS="${5:-"armeabi-v7a arm64-v8a"}"
 
