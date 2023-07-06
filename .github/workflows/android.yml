@@ -26,10 +26,6 @@ jobs:
         python-version: "3.11"
         cache: 'pip'
     - run: pip install -r requirements.txt
-    - name: Setup Node.js environment
-      uses: actions/setup-node@v2.5.2
-      with:
-        node-version: 18.16.1
     - name: Grant execute permission
       run: chmod +x ci_download_src_apk.sh ci_install_deps.sh ci_build.sh build_release.sh
     - name: Restore cached dependencies

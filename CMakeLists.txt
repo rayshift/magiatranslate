@@ -12,6 +12,19 @@ set(TARGET_NAME uwasa)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
 #endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
+
+# Options
+set(compile_definitions "")
+
+option(MAGIA_TRANSLATE_AUDIOFIX_3_0_1 "Include audiofix for 3.0.1 and above" ON)
+
+if (MAGIA_TRANSLATE_AUDIOFIX_3_0_1)
+  set(compile_definitions "${compile_definitions} -DMAGIA_TRANSLATE_AUDIOFIX_3_0_1")
+endif ()
+
+message(STATUS "[MagiaClient] MAGIA_TRANSLATE_AUDIOFIX_3_0_1: ${MAGIA_TRANSLATE_AUDIOFIX_3_0_1}")
+
+
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -fvisibility=hidden -fvisibility-inlines-hidden -g0 -O3 -ffunction-sections -fdata-sections")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fvisibility=hidden -fvisibility-inlines-hidden -g0 -O3 -ffunction-sections -fdata-sections")
@@ -58,6 +71,8 @@ add_library( # Sets the name of the library.
   "src/Utils.cpp"
   "src/rest/MagiaRest.cpp"
   )
+
+target_compile_definitions(${TARGET_NAME} PRIVATE "COMPILE_DEFINITIONS ${compile_definitions}")
 
 find_library(ANDROID_LOG_LIB log)
 target_link_libraries(${TARGET_NAME} PRIVATE ${ANDROID_LOG_LIB})

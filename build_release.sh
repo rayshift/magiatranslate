@@ -100,15 +100,6 @@ _create() {
 	# cp "${BASEDIR}/patches/images/story_ui_sprites00_patch.plist" "${BASEDIR}/build/app/assets/package/story/story_ui_sprites00.plist"
 	# cp "${BASEDIR}/patches/images/story_ui_sprites00_patch.png" "${BASEDIR}/build/app/assets/package/story/story_ui_sprites00.png"
 
-	if [[ "${MT_AUDIOFIX_3_0_1}" == "Y" ]] || [[ "${MT_AUDIOFIX_3_0_1}" == "y" ]] || [[ "${MT_AUDIOFIX_3_0_1}" == "true" ]]; then
-		# Fix low-pitched audio bug since magireco 3.0.1
-		# This was once done with MagiaHook.
-		# However, due to unexplained reason,
-		# that hook made the game engine probabilistically fail to create OpenSLES player,
-		# thus the game would get silenced in that way.
-		"${NODEJS}" "${BASEDIR}/patches/audiofix.js" --wdir "${BASEDIR}/build/app" --overwrite
-	fi
-
 	cp "${BASEDIR}/patches/koruri-semibold.ttf" "${BASEDIR}/build/app/assets/fonts/koruri-semibold.ttf"
 
 	echo "Updating sprites and AndroidManifest.xml..."
@@ -138,6 +129,10 @@ _build() {
 
 		echo "Running cmake ${tarch}..."
 		cd "${BASEDIR}/build/${tarch}"
+		local MAGIA_TRANSLATE_AUDIOFIX_3_0_1="OFF"
+		if [[ "${MT_AUDIOFIX_3_0_1}" == "Y" ]] || [[ "${MT_AUDIOFIX_3_0_1}" == "y" ]] || [[ "${MT_AUDIOFIX_3_0_1}" == "true" ]]; then
+			MAGIA_TRANSLATE_AUDIOFIX_3_0_1="ON"
+		fi
 		${CMAKE} -G Ninja \
 			-DANDROID_ABI="${tarch}" \
 			-DCMAKE_BUILD_TYPE:STRING="Release" \
@@ -151,6 +146,7 @@ _build() {
 			-DCMAKE_SYSTEM_VERSION="16" \
 			-DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION="clang" \
 			-DDOBBY_DEBUG="OFF" \
+			-DMAGIA_TRANSLATE_AUDIOFIX_3_0_1="${MAGIA_TRANSLATE_AUDIOFIX_3_0_1}" \
 			"${BASEDIR}/"
 		[ "$?" -ne "0" ] && _errorexit 1 "cmake failed for ${tarch}"
 		${NINJA}
