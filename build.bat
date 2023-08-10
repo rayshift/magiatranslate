@@ -75,7 +75,7 @@ rmdir /S /Q "%~dp0\build\app\"
 rmdir /S /Q "%~dp0\build\armv7\app\"
 echo Running apktool...
 CALL "%JAVA_HOME%\bin\java.exe" -jar "%~dp0\build\%apktooljar%" d "%apk%" -o "%~dp0\build\app"
-mkdir "%~dp0\build\app\smali\com\loadLib\"
+mkdir "%~dp0\build\app\smali_classes2\com\loadLib\"
 if not exist "%~dp0\build\app\lib\armeabi-v7a" mkdir "%~dp0\build\app\lib\armeabi-v7a"
 if not exist "%~dp0\build\app\lib\arm64-v8a" mkdir "%~dp0\build\app\lib\arm64-v8a"
 echo Extracting ARMv7 lib...
@@ -126,15 +126,15 @@ if errorlevel 1 goto errorexit
 
 :build
 echo Copying new smali files...
-call copy /Y "%~dp0\smali\loader\*.smali" "%~dp0\build\app\smali\com\loadLib\"
-mkdir "%~dp0\build\app\smali\io\kamihama\magianative\"
+call copy /Y "%~dp0\smali\loader\*.smali" "%~dp0\build\app\smali_classes2\com\loadLib\"
+mkdir "%~dp0\build\app\smali_classes2\io\kamihama\magianative\"
 echo Copying magianative...
-call copy /Y "%~dp0\smali\MagiaNative\app\src\main\java\io\kamihama\magianative\*.smali" "%~dp0\build\app\smali\io\kamihama\magianative\"
+call copy /Y "%~dp0\smali\MagiaNative\app\src\main\java\io\kamihama\magianative\*.smali" "%~dp0\build\app\smali_classes2\io\kamihama\magianative\"
 echo Copying libraries...
 REM robocopy does not eat quoted paths
 pushd "%~dp0"
-call robocopy /NFL /NDL /NJH /NJS /nc /ns /e smali\okhttp-smali\okhttp3\ build\app\smali\okhttp3\
-call robocopy /NFL /NDL /NJH /NJS /nc /ns /e smali\okhttp-smali\okio\ build\app\smali\okio\
+call robocopy /NFL /NDL /NJH /NJS /nc /ns /e smali\okhttp-smali\okhttp3\ build\app\smali_classes2\okhttp3\
+call robocopy /NFL /NDL /NJH /NJS /nc /ns /e smali\okhttp-smali\okio\ build\app\smali_classes2\okio\
 echo Copying unknown...
 call robocopy /NFL /NDL /NJH /NJS /nc /ns /e patches\unknown\ build\app\unknown\
 popd

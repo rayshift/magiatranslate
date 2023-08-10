@@ -72,7 +72,7 @@ _create() {
 	rm -rf "${BASEDIR}/build/armv7/app"
 	echo "Running apktool..."
 	${JAVA} -jar "${BASEDIR}/build/${APKTOOL}" d "${SRCAPK}" -o "${BASEDIR}/build/app/"
-	mkdir -p "${BASEDIR}/build/app/smali/com/loadLib"
+	mkdir -p "${BASEDIR}/build/app/smali_classes2/com/loadLib"
 	for tarch in ${TARCHS}
 	do
 		mkdir -p "${BASEDIR}/build/app/lib/${tarch}"
@@ -109,13 +109,13 @@ _create() {
 
 _build() {
 	echo "Copying new smali files..."
-	cp "${BASEDIR}"/smali/loader/*.smali "${BASEDIR}/build/app/smali/com/loadLib/"
-	mkdir -p "${BASEDIR}/build/app/smali/io/kamihama/magianative"
+	cp "${BASEDIR}"/smali/loader/*.smali "${BASEDIR}/build/app/smali_classes2/com/loadLib/"
+	mkdir -p "${BASEDIR}/build/app/smali_classes2/io/kamihama/magianative"
 	echo "Copying magianative..."
-	cp "${BASEDIR}"/smali/MagiaNative/app/src/main/java/io/kamihama/magianative/*.smali "${BASEDIR}/build/app/smali/io/kamihama/magianative/"
+	cp "${BASEDIR}"/smali/MagiaNative/app/src/main/java/io/kamihama/magianative/*.smali "${BASEDIR}/build/app/smali_classes2/io/kamihama/magianative/"
 	echo "Copying libraries..."
-	cp -r "${BASEDIR}/smali/okhttp-smali/okhttp3/" "${BASEDIR}/build/app/smali/okhttp3/"
-	cp -r "${BASEDIR}/smali/okhttp-smali/okio/" "${BASEDIR}/build/app/smali/okio/"
+	cp -r "${BASEDIR}/smali/okhttp-smali/okhttp3/" "${BASEDIR}/build/app/smali_classes2/okhttp3/"
+	cp -r "${BASEDIR}/smali/okhttp-smali/okio/" "${BASEDIR}/build/app/smali_classes2/okio/"
 	echo "Copying unknown..."
 	cp -r "${BASEDIR}/patches/unknown/" "${BASEDIR}/build/app/unknown/"
 	cp "${BASEDIR}/patches/strings.xml" "${BASEDIR}/build/app/res/values/strings.xml"
