@@ -1,6 +1,6 @@
 [submodule "lib/Dobby"]
 	path = lib/Dobby
-	url = https://github.com/neobenedict/Dobby
+	url = https://github.com/rayshift/Dobby
 	branch = master
 [submodule "lib/cocos"]
 	path = lib/cocos

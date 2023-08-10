@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 BASEDIR="$(realpath "$(dirname "${0}")")"
 
 # env-based
@@ -13,10 +15,14 @@ APKTOOL="${MT_APKTOOL:-apktool_2.6.0.jar}"
 ZIPALIGN="${MT_ZIPALIGN:-zipalign}" # ~/android-sdk/build-tools/zipalign
 APKSIGNER="${MT_APKSIGNER:-apksigner}" # ~/android-sdk/build-tools/apksigner
 
+ARMV7SRCAPK="${ARMV7SRCAPK:-${BASEDIR}/armv7apk/vanilla-armv7.apk}"
+
+MT_AUDIOFIX_3_0_1="${MT_AUDIOFIX_3_0_1:-Y}"
+
 # arg-based
 SRCAPK="${1:-${BASEDIR}/apk/vanilla.apk}"
 VERSION="${2:-v0.50}"
-NDK="${3:-${BASEDIR}/ndk/android-ndk-r21e}"
+NDK="${3:-${BASEDIR}/Android/Sdk/ndk/23.1.7779620}"
 FORCEOW="${4:-true}"
 TARCHS="${5:-"armeabi-v7a arm64-v8a"}"
 
@@ -25,6 +31,11 @@ RESULT="${BASEDIR}/build/io.kamihama.magiatranslate.${VERSION}.apk"
 _pre() {
 	[ -f "${SRCAPK}" ] || _errorexit 5 "Did not find MagiReco APK! Tried path: ${SRCAPK}"
 	echo "Found apk ${SRCAPK}"
+
+	if [[ "${TARCHS}" == *"armeabi-v7a"* ]]; then
+		[ -f "${ARMV7SRCAPK}" ] || _errorexit 5 "Did not find ARMv7 MagiReco APK! Tried path: ${ARMV7SRCAPK}"
+		echo "Found ARMv7 apk ${ARMV7SRCAPK}"
+	fi
 
 	[ -d "${NDK}" ] || _errorexit 6 "NDK directory does not exist! Tried path: ${NDK}"
 	NDK=$(realpath "${NDK}")
@@ -58,31 +69,36 @@ _get_apktool() {
 _create() {
 	echo "Removing existing build files..."
 	rm -rf "${BASEDIR}/build/app"
+	rm -rf "${BASEDIR}/build/armv7/app"
 	echo "Running apktool..."
 	${JAVA} -jar "${BASEDIR}/build/${APKTOOL}" d "${SRCAPK}" -o "${BASEDIR}/build/app/"
-	mkdir -p "${BASEDIR}/build/app/smali/com/loadLib"
+	mkdir -p "${BASEDIR}/build/app/smali_classes2/com/loadLib"
 	for tarch in ${TARCHS}
 	do
 		mkdir -p "${BASEDIR}/build/app/lib/${tarch}"
 	done
 
+	if [[ "${TARCHS}" == *"armeabi-v7a"* ]]; then
+		echo "Extracting ARMv7 lib..."
+		${JAVA} -jar "${BASEDIR}/build/${APKTOOL}" d "${ARMV7SRCAPK}" --no-src --no-res -o "${BASEDIR}/build/armv7/app"
+		mv "${BASEDIR}/build/armv7/app/lib/armeabi-v7a/"* "${BASEDIR}/build/app/lib/armeabi-v7a/"
+		rm -rf "${BASEDIR}/build/armv7/app"
+	fi
+
 	echo "Applying smali patches..."
-	git -C "${BASEDIR}" apply --stat "${BASEDIR}/patches/NativeBridge.patch"
-	git -C "${BASEDIR}" apply --stat "${BASEDIR}/patches/Hook.patch"
-	git -C "${BASEDIR}" apply --stat "${BASEDIR}/patches/Backtrace.patch"
-	git -C "${BASEDIR}" apply "${BASEDIR}/patches/NativeBridge.patch"
-	git -C "${BASEDIR}" apply "${BASEDIR}/patches/Hook.patch"
-	git -C "${BASEDIR}" apply "${BASEDIR}/patches/Backtrace.patch"
+	local PATCHES=(
+		"NativeBridge.patch"
+		"Hook.patch"
+		"Backtrace.patch"
+	)
+	local PATCH
+	for PATCH in "${PATCHES[@]}"; do
+		git -C "${BASEDIR}" apply --stat "${BASEDIR}/patches/${PATCH}"
+		git -C "${BASEDIR}" apply "${BASEDIR}/patches/${PATCH}"
+	done
 	echo "Applying misc patches..."
 	# cp "${BASEDIR}/patches/images/story_ui_sprites00_patch.plist" "${BASEDIR}/build/app/assets/package/story/story_ui_sprites00.plist"
 	# cp "${BASEDIR}/patches/images/story_ui_sprites00_patch.png" "${BASEDIR}/build/app/assets/package/story/story_ui_sprites00.png"
-
-	# Fix low-pitched audio bug since magireco 3.0.1
-	# This was once done with MagiaHook.
-	# However, due to unexplained reason,
-	# that hook made the game engine probabilistically fail to create OpenSLES player,
-	# thus the game would get silenced in that way.
-	"${NODEJS}" "${BASEDIR}/patches/audiofix.js" --wdir "${BASEDIR}/build/app" --overwrite
 
 	cp "${BASEDIR}/patches/koruri-semibold.ttf" "${BASEDIR}/build/app/assets/fonts/koruri-semibold.ttf"
 
@@ -93,13 +109,13 @@ _create() {
 
 _build() {
 	echo "Copying new smali files..."
-	cp "${BASEDIR}"/smali/loader/*.smali "${BASEDIR}/build/app/smali/com/loadLib/"
-	mkdir -p "${BASEDIR}/build/app/smali/io/kamihama/magianative"
+	cp "${BASEDIR}"/smali/loader/*.smali "${BASEDIR}/build/app/smali_classes2/com/loadLib/"
+	mkdir -p "${BASEDIR}/build/app/smali_classes2/io/kamihama/magianative"
 	echo "Copying magianative..."
-	cp "${BASEDIR}"/smali/MagiaNative/app/src/main/java/io/kamihama/magianative/*.smali "${BASEDIR}/build/app/smali/io/kamihama/magianative/"
+	cp "${BASEDIR}"/smali/MagiaNative/app/src/main/java/io/kamihama/magianative/*.smali "${BASEDIR}/build/app/smali_classes2/io/kamihama/magianative/"
 	echo "Copying libraries..."
-	cp -r "${BASEDIR}/smali/okhttp-smali/okhttp3/" "${BASEDIR}/build/app/smali/okhttp3/"
-	cp -r "${BASEDIR}/smali/okhttp-smali/okio/" "${BASEDIR}/build/app/smali/okio/"
+	cp -r "${BASEDIR}/smali/okhttp-smali/okhttp3/" "${BASEDIR}/build/app/smali_classes2/okhttp3/"
+	cp -r "${BASEDIR}/smali/okhttp-smali/okio/" "${BASEDIR}/build/app/smali_classes2/okio/"
 	echo "Copying unknown..."
 	cp -r "${BASEDIR}/patches/unknown/" "${BASEDIR}/build/app/unknown/"
 	cp "${BASEDIR}/patches/strings.xml" "${BASEDIR}/build/app/res/values/strings.xml"
@@ -113,6 +129,10 @@ _build() {
 
 		echo "Running cmake ${tarch}..."
 		cd "${BASEDIR}/build/${tarch}"
+		local MAGIA_TRANSLATE_AUDIOFIX_3_0_1="OFF"
+		if [[ "${MT_AUDIOFIX_3_0_1}" == "Y" ]] || [[ "${MT_AUDIOFIX_3_0_1}" == "y" ]] || [[ "${MT_AUDIOFIX_3_0_1}" == "true" ]]; then
+			MAGIA_TRANSLATE_AUDIOFIX_3_0_1="ON"
+		fi
 		${CMAKE} -G Ninja \
 			-DANDROID_ABI="${tarch}" \
 			-DCMAKE_BUILD_TYPE:STRING="Release" \
@@ -126,6 +146,7 @@ _build() {
 			-DCMAKE_SYSTEM_VERSION="16" \
 			-DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION="clang" \
 			-DDOBBY_DEBUG="OFF" \
+			-DMAGIA_TRANSLATE_AUDIOFIX_3_0_1="${MAGIA_TRANSLATE_AUDIOFIX_3_0_1}" \
 			"${BASEDIR}/"
 		[ "$?" -ne "0" ] && _errorexit 1 "cmake failed for ${tarch}"
 		${NINJA}

@@ -17,6 +17,9 @@
 #include "libmadomagi.h"
 #include "rest/MagiaRest.h"
 
+#define RT_FAILED -1
+#define RS_SUCCESS 0
+
 const char* libName = "libmadomagi_native.so";
 const char* hookName = "libuwasa.so";
 
@@ -457,6 +460,25 @@ pthread_mutex_t *http2SessionSetMaxConnectionNum(uintptr_t *session, int max) {
     return http2SessionSetMaxConnectionNumOld(session, max);
 }
 
+#if defined(MAGIA_TRANSLATE_AUDIOFIX_3_0_1)
+uint32_t (*criNcv_GetHardwareSamplingRate_ANDROID_Hooked)();
+
+uint32_t criNcv_GetHardwareSamplingRate_ANDROID() {
+    auto orig = criNcv_GetHardwareSamplingRate_ANDROID_Hooked();
+    auto value = orig;
+    value = 48000;
+    LOGI("using hardware sample rate: %d (orig: %d)", value, orig);
+    return value;
+}
+
+void *(*criNcv_SetHardwareSamplingRate_ANDROID_Hooked)(uint32_t value);
+
+void criNcv_SetHardwareSamplingRate_ANDROID(uint32_t value) {
+    LOGI("set cached hardware sample rate to %d", value);
+    criNcv_SetHardwareSamplingRate_ANDROID_Hooked(value);
+}
+#endif
+
 void initialization_error(const char* error) {
     LOGE("%s", error);
     auto errorMsg = string_format("A critical error has occurred, MagiaTranslate will not work properly and may crash. Please report this error on GitHub or Discord.\n%s", error);
@@ -512,6 +534,42 @@ void *hook_loop(void *arguments) {
     // For debugging
     //DobbyHook(lookup_symbol(libLocation, "_ZN5http212Http2Session6setURIERKSs"), (void *)setUriDebug, (void **)&setUriDebugOld); - crashes arm32 now.
 
+#if defined(MAGIA_TRANSLATE_AUDIOFIX_3_0_1)
+    // audio pitch & speed fix
+    void *getHWSampleRate = lookup_symbol(libLocation, "criNcv_GetHardwareSamplingRate_ANDROID");
+
+    if (getHWSampleRate != nullptr) {
+        LOGD("Found criNcv_GetHardwareSamplingRate_ANDROID at %p.", (void *)getHWSampleRate);
+        if (DobbyHook(getHWSampleRate, (void *)criNcv_GetHardwareSamplingRate_ANDROID, (void **)&criNcv_GetHardwareSamplingRate_ANDROID_Hooked) == RS_SUCCESS) {
+            LOGI("Successfully hooked criNcv_GetHardwareSamplingRate_ANDROID.");
+        }
+        else {
+            initialization_error("Unable to hook criNcv_GetHardwareSamplingRate_ANDROID.");
+            pthread_exit(NULL);
+        }
+    }
+    else {
+        initialization_error("Unable to hook criNcv_GetHardwareSamplingRate_ANDROID.");
+        pthread_exit(NULL);
+    }
+
+    void *setHWSampleRate = lookup_symbol(libLocation, "criNcv_SetHardwareSamplingRate_ANDROID");
+
+    if (setHWSampleRate != nullptr) {
+        LOGD("Found criNcv_SetHardwareSamplingRate_ANDROID at %p.", (void *)setHWSampleRate);
+        if (DobbyHook(setHWSampleRate, (void *)criNcv_SetHardwareSamplingRate_ANDROID, (void **)&criNcv_SetHardwareSamplingRate_ANDROID_Hooked) == RS_SUCCESS) {
+            LOGI("Successfully hooked criNcv_SetHardwareSamplingRate_ANDROID.");
+        }
+        else {
+            initialization_error("Unable to hook criNcv_SetHardwareSamplingRate_ANDROID.");
+            pthread_exit(NULL);
+        }
+    }
+    else {
+        initialization_error("Unable to hook criNcv_SetHardwareSamplingRate_ANDROID.");
+        pthread_exit(NULL);
+    }
+#endif
 
     // Hooks
     void *cocos2dnodeSetPosition = lookup_symbol(libLocation, "_ZN7cocos2d4Node11setPositionERKNS_4Vec2E"); 
