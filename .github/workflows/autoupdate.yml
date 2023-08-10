@@ -1,0 +1,43 @@
+name: AutoUpdate
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron:  '30 5,17 * * *'
+
+jobs:
+  check-and-update:
+
+    runs-on: ubuntu-latest
+
+    if: github.ref == 'refs/heads/master'
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Grant execute permission
+      run: chmod +x ./ci_check_for_update.sh
+    - name: Check for update
+      id: check-for-update
+      run: ./ci_check_for_update.sh >> "$GITHUB_OUTPUT"
+    - name: Commit new version
+      if: steps.check-for-update.outputs.new-version-available == 'true'
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        sed -i "s/^SRCAPK_VER=.*/SRCAPK_VER=\"${{ steps.check-for-update.outputs.latest-src-apk-ver }}\"/" ci_versions/src_apk.sh
+        git add ci_versions/src_apk.sh
+        git commit -m "bump SRCAPK_VER to ${{ steps.check-for-update.outputs.latest-src-apk-ver }}"
+        git tag "v${{ steps.check-for-update.outputs.latest-src-apk-ver }}-prerelease"
+        git push origin master
+        git push origin "v${{ steps.check-for-update.outputs.latest-src-apk-ver }}-prerelease"
+    - name: Trigger Android CI
+      if: steps.check-for-update.outputs.new-version-available == 'true'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.actions.createWorkflowDispatch({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            workflow_id: 'android.yml',
+            ref: 'v${{ steps.check-for-update.outputs.latest-src-apk-ver }}-prerelease',
+          })

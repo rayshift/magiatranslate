@@ -4,11 +4,17 @@ on:
   push:
     branches: [ "master", "dev" ]
     tags: [ "*" ]
+  workflow_dispatch:
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
+
+    if: >-
+      github.ref == 'refs/heads/master' ||
+      github.ref == 'refs/heads/dev' ||
+      startsWith(github.ref, 'refs/tags/v')
 
     steps:
     - uses: actions/checkout@v3
@@ -76,10 +82,23 @@ jobs:
       with:
         name: built_apk
         path: ./*.apk
-    - name: Release Build
-      if: startsWith(github.ref, 'refs/tags/v')
+    - name: Prerelease Build
+      if: >-
+        startsWith(github.ref, 'refs/tags/v') &&
+        endsWith(github.ref, '-prerelease')
       uses: softprops/action-gh-release@v1
       with:
+        prerelease: true
+        files: |
+          ${{ env.MAIN_APK }}
+          ${{ env.FAILSAFE_APK }}
+    - name: Release Build
+      if: >-
+        startsWith(github.ref, 'refs/tags/v') &&
+        !endsWith(github.ref, '-prerelease')
+      uses: softprops/action-gh-release@v1
+      with:
+        prerelease: false
         files: |
           ${{ env.MAIN_APK }}
           ${{ env.FAILSAFE_APK }}
