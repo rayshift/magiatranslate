@@ -34,17 +34,22 @@ if "%JAVA_HOME%" == "" (
     echo JAVA_HOME is not set
     goto errorexit
 )
-set ndk="C:/Android/Sdk/ndk/23.1.7779620"
-set /p ndk="Enter ndk Location [%ndk%]: "
-set cmake="C:/Android/sdk/cmake/3.22.1/bin/cmake.exe"
-set /p cmake="Enter cmake Location [%cmake%]: "
-set ninja="C:/Android/sdk/cmake/3.22.1/bin/ninja.exe"
-set /p ninja="Enter ninja Location [%ninja%]: "
 
-set zipalign="C:/Android/sdk/build-tools/34.0.0/zipalign.exe"
-set /p zipalign="Enter zipalign Location [%zipalign%]: "
-set apksigner="C:/Android/sdk/build-tools/34.0.0/apksigner.bat"
-set /p apksigner="Enter apksigner Location [%apksigner%]: "
+if exist localbuildenv.bat (
+    call localbuildenv.bat
+) else (
+    set ndk="C:/Android/Sdk/ndk/23.1.7779620"
+    set /p ndk="Enter ndk Location [%ndk%]: "
+    set cmake="C:/Android/sdk/cmake/3.22.1/bin/cmake.exe"
+    set /p cmake="Enter cmake Location [%cmake%]: "
+    set ninja="C:/Android/sdk/cmake/3.22.1/bin/ninja.exe"
+    set /p ninja="Enter ninja Location [%ninja%]: "
+
+    set zipalign="C:/Android/sdk/build-tools/34.0.0/zipalign.exe"
+    set /p zipalign="Enter zipalign Location [%zipalign%]: "
+    set apksigner="C:/Android/sdk/build-tools/34.0.0/apksigner.bat"
+    set /p apksigner="Enter apksigner Location [%apksigner%]: "
+)
 
 if not exist "%~dp0\build" mkdir "%~dp0\build"
 

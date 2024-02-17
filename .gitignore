@@ -430,6 +430,7 @@ lib/Dobby_old/
 sign.bat
 sign.sh
 jarsign.sh
+localbuildenv.bat
 
 # Android NDK, build-tools
 /ndk/
