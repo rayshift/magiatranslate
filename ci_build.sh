@@ -43,7 +43,7 @@ export MT_NINJA="${CMAKE_BIN_DIR}/ninja"
 export MT_ZIPALIGN="${BUILD_TOOLS_DIR}/zipalign"
 export MT_APKSIGNER="${BUILD_TOOLS_DIR}/apksigner"
 
-RESULT="${BASEDIR}/build/io.kamihama.magiatranslate.${VERSION}.apk"
+RESULT="${BASEDIR}/build/com.aniplex.magireco.${VERSION}.apk"
 
 # build main APK which contains audiofix
 MT_AUDIOFIX_3_0_1=Y "${BASEDIR}/build_release.sh" "${SRCAPK}" "${VERSION}" "${NDK}"

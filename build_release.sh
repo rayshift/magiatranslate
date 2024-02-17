@@ -26,7 +26,7 @@ NDK="${3:-${BASEDIR}/Android/Sdk/ndk/23.1.7779620}"
 FORCEOW="${4:-true}"
 TARCHS="${5:-"armeabi-v7a arm64-v8a"}"
 
-RESULT="${BASEDIR}/build/io.kamihama.magiatranslate.${VERSION}.apk"
+RESULT="${BASEDIR}/build/com.aniplex.magireco.${VERSION}.apk"
 
 _pre() {
 	[ -f "${SRCAPK}" ] || _errorexit 5 "Did not find MagiReco APK! Tried path: ${SRCAPK}"
