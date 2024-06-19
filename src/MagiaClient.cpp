@@ -66,6 +66,9 @@ void *(*setMaxLineWidthHooked)(uintptr_t label, float length);
 void *(*setDimensionsHooked)(uintptr_t label, float width, float a3);
 
 const std::string* (*urlConfigResourceHooked)(void* a1, UrlConfigResourceType type); // There is also api, chat, web, etc for other endpoints
+const std::string* (*urlConfigApiHooked)(void* a1, UrlConfigApiType type);
+const std::string* (*urlConfigWebHooked)(void* a1, UrlConfigWebType type);
+const std::string* (*urlConfigChatHooked)(void* a1, UrlConfigChatType type);
 
 //void* urlConfig_ImplObj = nullptr;
 
@@ -211,6 +214,29 @@ const std::string* urlConfigResource(void* a1, UrlConfigResourceType type) {
     return urlConfigResourceHooked(a1, type);
 }
 
+// Redirect to api proxy
+const std::string apiProxyDomainName = "magirecojp.cirno.name";
+
+const std::string* urlConfigApi(void* a1, UrlConfigApiType type) {
+    auto url = urlConfigApiHooked(a1, type);
+    ((std::string*)url)->replace(type == UrlConfigApiType::ApiDomainName ? 0 : 8, apiProxyDomainName.length(), apiProxyDomainName);
+    LOGD("Using urlConfigApi type %d URL: %s", type, url->c_str());
+    return url;
+}
+
+const std::string* urlConfigWeb(void* a1, UrlConfigWebType type) {
+    auto url = urlConfigWebHooked(a1, type);
+    ((std::string*)url)->replace(8, apiProxyDomainName.length(), apiProxyDomainName);
+    LOGD("Using urlConfigWeb type %d URL: %s", type, url->c_str());
+    return url;
+}
+
+const std::string* urlConfigChat(void* a1, UrlConfigChatType type) {
+    auto url = urlConfigChatHooked(a1, type);
+    ((std::string*)url)->replace(8, apiProxyDomainName.length(), apiProxyDomainName);
+    LOGD("Using urlConfigChat type %d URL: %s", type, url->c_str());
+    return url;
+}
 
 void* (*cocosCreateLabelHooked)(const uintptr_t* textPtr, const std::string &fontPtr, float textSize, cocos2d::Size const& cocosSize, cocos2d::TextHAlignment hAlign, cocos2d::TextVAlignment vAlign);
 void* cocosCreateLabel(const uintptr_t* textPtr, const std::string &fontPtr, float textSize, cocos2d::Size const& cocosSize, cocos2d::TextHAlignment hAlign, cocos2d::TextVAlignment vAlign) {
@@ -504,6 +530,36 @@ void *hook_loop(void *arguments) {
     }
     else {
         initialization_error("Failed to hook UrlConfig::resource.");
+        pthread_exit(NULL);
+    }
+
+    // Hook api endpoint
+    void *apiHook = lookup_symbol(libLocation, "_ZNK9UrlConfig3apiENS_3Api4TypeE"); // UrlConfig::api(UrlConfig::Api::Type)const
+    if (DobbyHook(apiHook, (void *)urlConfigApi, (void **)&urlConfigApiHooked) == RS_SUCCESS) {
+        LOGI("Successfully hooked UrlConfig::api.");
+    }
+    else {
+        initialization_error("Failed to hook UrlConfig::api.");
+        pthread_exit(NULL);
+    }
+
+    // Hook web endpoint
+    void *webHook = lookup_symbol(libLocation, "_ZNK9UrlConfig3webENS_3Web4TypeE"); // UrlConfig::web(UrlConfig::Web::Type)const
+    if (DobbyHook(webHook, (void *)urlConfigWeb, (void **)&urlConfigWebHooked) == RS_SUCCESS) {
+        LOGI("Successfully hooked UrlConfig::web.");
+    }
+    else {
+        initialization_error("Failed to hook UrlConfig::web.");
+        pthread_exit(NULL);
+    }
+
+    // Hook chat endpoint
+    void *chatHook = lookup_symbol(libLocation, "_ZNK9UrlConfig4chatENS_4Chat4TypeE"); // UrlConfig::chat(UrlConfig::Chat::Type)const
+    if (DobbyHook(chatHook, (void *)urlConfigChat, (void **)&urlConfigChatHooked) == RS_SUCCESS) {
+        LOGI("Successfully hooked UrlConfig::chat.");
+    }
+    else {
+        initialization_error("Failed to hook UrlConfig::chat.");
         pthread_exit(NULL);
     }
 
