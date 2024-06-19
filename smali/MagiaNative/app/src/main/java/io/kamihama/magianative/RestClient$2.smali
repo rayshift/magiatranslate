@@ -1,4 +1,4 @@
-.class final Lio/kamihama/magianative/RestClient$2;
+.class Lio/kamihama/magianative/RestClient$2;
 .super Ljava/lang/Object;
 .source "RestClient.java"
 
@@ -12,16 +12,15 @@
 .end annotation
 
 .annotation system Ldalvik/annotation/InnerClass;
-    accessFlags = 0x8
+    accessFlags = 0x0
     name = null
 .end annotation
 
 
 # direct methods
 .method constructor <init>()V
-    .registers 1
+    .locals 0
 
-    .prologue
     .line 110
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
@@ -31,13 +30,9 @@
 
 # virtual methods
 .method public verify(Ljava/lang/String;Ljavax/net/ssl/SSLSession;)Z
-    .registers 4
-    .param p1, "hostname"    # Ljava/lang/String;
-    .param p2, "session"    # Ljavax/net/ssl/SSLSession;
+    .locals 0
 
-    .prologue
-    .line 113
-    const/4 v0, 0x1
+    const/4 p1, 0x1
 
-    return v0
+    return p1
 .end method

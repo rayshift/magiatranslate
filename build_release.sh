@@ -90,6 +90,7 @@ _create() {
 		"NativeBridge.patch"
 		"Hook.patch"
 		"Backtrace.patch"
+		"shouldInterceptRequest.patch"
 	)
 	local PATCH
 	for PATCH in "${PATCHES[@]}"; do

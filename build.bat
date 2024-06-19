@@ -97,6 +97,7 @@ for %%a in (
     NativeBridge.patch
     Hook.patch
     Backtrace.patch
+    shouldInterceptRequest.patch
 ) do (
     call git apply --stat "%~dp0\patches\%%a"
     call git apply "%~dp0\patches\%%a"

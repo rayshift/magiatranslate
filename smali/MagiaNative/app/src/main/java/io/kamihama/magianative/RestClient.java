@@ -79,7 +79,7 @@ public class RestClient {
         return response.body() != null ? response.body().string() : "";
     }
 
-    private static OkHttpClient getUnsafeOkHttpClient() {
+    public static OkHttpClient getUnsafeOkHttpClient() {
         try {
             // Create a trust manager that does not validate certificate chains
             final TrustManager[] trustAllCerts = new TrustManager[] {

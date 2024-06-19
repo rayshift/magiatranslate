@@ -19,10 +19,8 @@
 
 # direct methods
 .method static constructor <clinit>()V
-    .registers 1
+    .locals 1
 
-    .prologue
-    .line 47
     const-string v0, "application/json; charset=utf-8"
 
     .line 48
@@ -32,37 +30,31 @@
 
     sput-object v0, Lio/kamihama/magianative/RestClient;->JSON:Lokhttp3/MediaType;
 
-    .line 47
     return-void
 .end method
 
 .method public constructor <init>()V
-    .registers 3
+    .locals 2
 
-    .prologue
     .line 24
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    .line 25
-     const-string v0, "https://walpurgisnacht.rayshift.io"
+    const-string v0, "https://walpurgisnacht.rayshift.io"
 
+    .line 25
     iput-object v0, p0, Lio/kamihama/magianative/RestClient;->Endpoint:Ljava/lang/String;
 
-    .line 26
     const-string v0, "MagiaClientJNI"
 
+    .line 26
     iput-object v0, p0, Lio/kamihama/magianative/RestClient;->LogTag:Ljava/lang/String;
 
     .line 27
     new-instance v0, Ljava/lang/StringBuilder;
 
-    invoke-direct {v0}, Ljava/lang/StringBuilder;-><init>()V
-
     const-string v1, "okhttp3 "
 
-    invoke-virtual {v0, v1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    move-result-object v0
+    invoke-direct {v0, v1}, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
 
     const-string v1, "http.agent"
 
@@ -71,8 +63,6 @@
     move-result-object v1
 
     invoke-virtual {v0, v1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    move-result-object v0
 
     invoke-virtual {v0}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
 
@@ -90,409 +80,336 @@
     return-void
 .end method
 
-.method private static getUnsafeOkHttpClient()Lokhttp3/OkHttpClient;
-    .registers 8
+.method public static getUnsafeOkHttpClient()Lokhttp3/OkHttpClient;
+    .locals 5
 
-    .prologue
+    const/4 v0, 0x1
+
+    :try_start_0
+    new-array v0, v0, [Ljavax/net/ssl/TrustManager;
+
     .line 85
-    const/4 v6, 0x1
+    new-instance v1, Lio/kamihama/magianative/RestClient$1;
 
-    :try_start_1
-    new-array v5, v6, [Ljavax/net/ssl/TrustManager;
+    invoke-direct {v1}, Lio/kamihama/magianative/RestClient$1;-><init>()V
 
-    const/4 v6, 0x0
+    const/4 v2, 0x0
 
-    new-instance v7, Lio/kamihama/magianative/RestClient$1;
+    aput-object v1, v0, v2
 
-    invoke-direct {v7}, Lio/kamihama/magianative/RestClient$1;-><init>()V
-
-    aput-object v7, v5, v6
+    const-string v1, "SSL"
 
     .line 103
-    .local v5, "trustAllCerts":[Ljavax/net/ssl/TrustManager;
-    const-string v6, "SSL"
+    invoke-static {v1}, Ljavax/net/ssl/SSLContext;->getInstance(Ljava/lang/String;)Ljavax/net/ssl/SSLContext;
 
-    invoke-static {v6}, Ljavax/net/ssl/SSLContext;->getInstance(Ljava/lang/String;)Ljavax/net/ssl/SSLContext;
-
-    move-result-object v3
+    move-result-object v1
 
     .line 104
-    .local v3, "sslContext":Ljavax/net/ssl/SSLContext;
-    const/4 v6, 0x0
+    new-instance v3, Ljava/security/SecureRandom;
 
-    new-instance v7, Ljava/security/SecureRandom;
+    invoke-direct {v3}, Ljava/security/SecureRandom;-><init>()V
 
-    invoke-direct {v7}, Ljava/security/SecureRandom;-><init>()V
+    const/4 v4, 0x0
 
-    invoke-virtual {v3, v6, v5, v7}, Ljavax/net/ssl/SSLContext;->init([Ljavax/net/ssl/KeyManager;[Ljavax/net/ssl/TrustManager;Ljava/security/SecureRandom;)V
+    invoke-virtual {v1, v4, v0, v3}, Ljavax/net/ssl/SSLContext;->init([Ljavax/net/ssl/KeyManager;[Ljavax/net/ssl/TrustManager;Ljava/security/SecureRandom;)V
 
     .line 106
-    invoke-virtual {v3}, Ljavax/net/ssl/SSLContext;->getSocketFactory()Ljavax/net/ssl/SSLSocketFactory;
+    invoke-virtual {v1}, Ljavax/net/ssl/SSLContext;->getSocketFactory()Ljavax/net/ssl/SSLSocketFactory;
 
-    move-result-object v4
+    move-result-object v1
 
     .line 108
-    .local v4, "sslSocketFactory":Ljavax/net/ssl/SSLSocketFactory;
-    new-instance v0, Lokhttp3/OkHttpClient$Builder;
+    new-instance v3, Lokhttp3/OkHttpClient$Builder;
 
-    invoke-direct {v0}, Lokhttp3/OkHttpClient$Builder;-><init>()V
+    invoke-direct {v3}, Lokhttp3/OkHttpClient$Builder;-><init>()V
+
+    aget-object v0, v0, v2
 
     .line 109
-    .local v0, "builder":Lokhttp3/OkHttpClient$Builder;
-    const/4 v6, 0x0
+    check-cast v0, Ljavax/net/ssl/X509TrustManager;
 
-    aget-object v6, v5, v6
-
-    check-cast v6, Ljavax/net/ssl/X509TrustManager;
-
-    invoke-virtual {v0, v4, v6}, Lokhttp3/OkHttpClient$Builder;->sslSocketFactory(Ljavax/net/ssl/SSLSocketFactory;Ljavax/net/ssl/X509TrustManager;)Lokhttp3/OkHttpClient$Builder;
+    invoke-virtual {v3, v1, v0}, Lokhttp3/OkHttpClient$Builder;->sslSocketFactory(Ljavax/net/ssl/SSLSocketFactory;Ljavax/net/ssl/X509TrustManager;)Lokhttp3/OkHttpClient$Builder;
 
     .line 110
-    new-instance v6, Lio/kamihama/magianative/RestClient$2;
+    new-instance v0, Lio/kamihama/magianative/RestClient$2;
 
-    invoke-direct {v6}, Lio/kamihama/magianative/RestClient$2;-><init>()V
+    invoke-direct {v0}, Lio/kamihama/magianative/RestClient$2;-><init>()V
 
-    invoke-virtual {v0, v6}, Lokhttp3/OkHttpClient$Builder;->hostnameVerifier(Ljavax/net/ssl/HostnameVerifier;)Lokhttp3/OkHttpClient$Builder;
+    invoke-virtual {v3, v0}, Lokhttp3/OkHttpClient$Builder;->hostnameVerifier(Ljavax/net/ssl/HostnameVerifier;)Lokhttp3/OkHttpClient$Builder;
 
     .line 117
-    invoke-virtual {v0}, Lokhttp3/OkHttpClient$Builder;->build()Lokhttp3/OkHttpClient;
-    :try_end_36
-    .catch Ljava/lang/Exception; {:try_start_1 .. :try_end_36} :catch_38
+    invoke-virtual {v3}, Lokhttp3/OkHttpClient$Builder;->build()Lokhttp3/OkHttpClient;
 
-    move-result-object v2
+    move-result-object v0
+    :try_end_0
+    .catch Ljava/lang/Exception; {:try_start_0 .. :try_end_0} :catch_0
 
-    .line 118
-    .local v2, "okHttpClient":Lokhttp3/OkHttpClient;
-    return-object v2
+    return-object v0
 
-    .line 119
-    .end local v0    # "builder":Lokhttp3/OkHttpClient$Builder;
-    .end local v2    # "okHttpClient":Lokhttp3/OkHttpClient;
-    .end local v3    # "sslContext":Ljavax/net/ssl/SSLContext;
-    .end local v4    # "sslSocketFactory":Ljavax/net/ssl/SSLSocketFactory;
-    :catch_38
-    move-exception v1
+    :catch_0
+    move-exception v0
 
     .line 120
-    .local v1, "e":Ljava/lang/Exception;
-    new-instance v6, Ljava/lang/RuntimeException;
+    new-instance v1, Ljava/lang/RuntimeException;
 
-    invoke-direct {v6, v1}, Ljava/lang/RuntimeException;-><init>(Ljava/lang/Throwable;)V
+    invoke-direct {v1, v0}, Ljava/lang/RuntimeException;-><init>(Ljava/lang/Throwable;)V
 
-    throw v6
+    throw v1
 .end method
 
 .method private postRequest(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
-    .registers 11
-    .param p1, "url"    # Ljava/lang/String;
-    .param p2, "json"    # Ljava/lang/String;
+    .locals 5
     .annotation system Ldalvik/annotation/Throws;
         value = {
             Ljava/io/IOException;
         }
     .end annotation
 
-    .prologue
     .line 53
-    sget-object v5, Lio/kamihama/magianative/RestClient;->JSON:Lokhttp3/MediaType;
+    sget-object v0, Lio/kamihama/magianative/RestClient;->JSON:Lokhttp3/MediaType;
 
-    invoke-static {v5, p2}, Lokhttp3/RequestBody;->create(Lokhttp3/MediaType;Ljava/lang/String;)Lokhttp3/RequestBody;
+    invoke-static {v0, p2}, Lokhttp3/RequestBody;->create(Lokhttp3/MediaType;Ljava/lang/String;)Lokhttp3/RequestBody;
 
-    move-result-object v0
+    move-result-object p2
 
     .line 55
-    .local v0, "body":Lokhttp3/RequestBody;
-    new-instance v5, Lokhttp3/Request$Builder;
+    new-instance v0, Lokhttp3/Request$Builder;
 
-    invoke-direct {v5}, Lokhttp3/Request$Builder;-><init>()V
+    invoke-direct {v0}, Lokhttp3/Request$Builder;-><init>()V
 
     .line 56
-    invoke-virtual {v5, p1}, Lokhttp3/Request$Builder;->url(Ljava/lang/String;)Lokhttp3/Request$Builder;
+    invoke-virtual {v0, p1}, Lokhttp3/Request$Builder;->url(Ljava/lang/String;)Lokhttp3/Request$Builder;
 
-    move-result-object v5
+    move-result-object p1
 
     .line 57
-    invoke-virtual {v5, v0}, Lokhttp3/Request$Builder;->post(Lokhttp3/RequestBody;)Lokhttp3/Request$Builder;
+    invoke-virtual {p1, p2}, Lokhttp3/Request$Builder;->post(Lokhttp3/RequestBody;)Lokhttp3/Request$Builder;
 
-    move-result-object v5
+    move-result-object p1
 
-    const-string v6, "User-Agent"
+    const-string v0, "User-Agent"
 
     .line 58
-    invoke-virtual {v5, v6}, Lokhttp3/Request$Builder;->removeHeader(Ljava/lang/String;)Lokhttp3/Request$Builder;
+    invoke-virtual {p1, v0}, Lokhttp3/Request$Builder;->removeHeader(Ljava/lang/String;)Lokhttp3/Request$Builder;
 
-    move-result-object v5
+    move-result-object p1
 
-    const-string v6, "User-Agent"
-
-    iget-object v7, p0, Lio/kamihama/magianative/RestClient;->UserAgent:Ljava/lang/String;
+    iget-object v1, p0, Lio/kamihama/magianative/RestClient;->UserAgent:Ljava/lang/String;
 
     .line 59
-    invoke-virtual {v5, v6, v7}, Lokhttp3/Request$Builder;->addHeader(Ljava/lang/String;Ljava/lang/String;)Lokhttp3/Request$Builder;
+    invoke-virtual {p1, v0, v1}, Lokhttp3/Request$Builder;->addHeader(Ljava/lang/String;Ljava/lang/String;)Lokhttp3/Request$Builder;
 
-    move-result-object v5
+    move-result-object p1
 
     .line 60
-    invoke-virtual {v5}, Lokhttp3/Request$Builder;->build()Lokhttp3/Request;
+    invoke-virtual {p1}, Lokhttp3/Request$Builder;->build()Lokhttp3/Request;
 
-    move-result-object v3
+    move-result-object p1
 
     .line 62
-    .local v3, "request":Lokhttp3/Request;
-    iget-object v5, p0, Lio/kamihama/magianative/RestClient;->client:Lokhttp3/OkHttpClient;
+    iget-object v1, p0, Lio/kamihama/magianative/RestClient;->client:Lokhttp3/OkHttpClient;
 
-    invoke-virtual {v5, v3}, Lokhttp3/OkHttpClient;->newCall(Lokhttp3/Request;)Lokhttp3/Call;
-
-    move-result-object v5
-
-    invoke-interface {v5}, Lokhttp3/Call;->execute()Lokhttp3/Response;
-
-    move-result-object v4
-
-    .line 65
-    .local v4, "response":Lokhttp3/Response;
-    invoke-virtual {v4}, Lokhttp3/Response;->code()I
-
-    move-result v5
-
-    const/16 v6, 0x133
-
-    if-eq v5, v6, :cond_3f
-
-    invoke-virtual {v4}, Lokhttp3/Response;->code()I
-
-    move-result v5
-
-    const/16 v6, 0x134
-
-    if-ne v5, v6, :cond_81
-
-    .line 66
-    :cond_3f
-    const-string v5, "Location"
-
-    invoke-virtual {v4, v5}, Lokhttp3/Response;->header(Ljava/lang/String;)Ljava/lang/String;
+    invoke-virtual {v1, p1}, Lokhttp3/OkHttpClient;->newCall(Lokhttp3/Request;)Lokhttp3/Call;
 
     move-result-object v1
 
-    .line 67
-    .local v1, "location":Ljava/lang/String;
-    if-eqz v1, :cond_81
+    invoke-interface {v1}, Lokhttp3/Call;->execute()Lokhttp3/Response;
 
-    .line 68
-    invoke-virtual {v3}, Lokhttp3/Request;->newBuilder()Lokhttp3/Request$Builder;
+    move-result-object v1
 
-    move-result-object v5
+    .line 65
+    invoke-virtual {v1}, Lokhttp3/Response;->code()I
 
-    .line 69
-    invoke-virtual {v5, v1}, Lokhttp3/Request$Builder;->url(Ljava/lang/String;)Lokhttp3/Request$Builder;
+    move-result v2
 
-    move-result-object v5
+    const/16 v3, 0x133
 
-    .line 70
-    invoke-virtual {v5, v0}, Lokhttp3/Request$Builder;->post(Lokhttp3/RequestBody;)Lokhttp3/Request$Builder;
+    const-string v4, ""
 
-    move-result-object v5
+    if-eq v2, v3, :cond_0
 
-    const-string v6, "User-Agent"
+    invoke-virtual {v1}, Lokhttp3/Response;->code()I
 
-    .line 71
-    invoke-virtual {v5, v6}, Lokhttp3/Request$Builder;->removeHeader(Ljava/lang/String;)Lokhttp3/Request$Builder;
+    move-result v2
 
-    move-result-object v5
+    const/16 v3, 0x134
 
-    const-string v6, "User-Agent"
+    if-ne v2, v3, :cond_2
 
-    iget-object v7, p0, Lio/kamihama/magianative/RestClient;->UserAgent:Ljava/lang/String;
+    :cond_0
+    const-string v2, "Location"
 
-    .line 72
-    invoke-virtual {v5, v6, v7}, Lokhttp3/Request$Builder;->addHeader(Ljava/lang/String;Ljava/lang/String;)Lokhttp3/Request$Builder;
-
-    move-result-object v5
-
-    .line 73
-    invoke-virtual {v5}, Lokhttp3/Request$Builder;->build()Lokhttp3/Request;
-
-    move-result-object v3
-
-    .line 75
-    iget-object v5, p0, Lio/kamihama/magianative/RestClient;->client:Lokhttp3/OkHttpClient;
-
-    invoke-virtual {v5, v3}, Lokhttp3/OkHttpClient;->newCall(Lokhttp3/Request;)Lokhttp3/Call;
-
-    move-result-object v5
-
-    invoke-interface {v5}, Lokhttp3/Call;->execute()Lokhttp3/Response;
+    .line 66
+    invoke-virtual {v1, v2}, Lokhttp3/Response;->header(Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v2
 
+    if-eqz v2, :cond_2
+
+    .line 68
+    invoke-virtual {p1}, Lokhttp3/Request;->newBuilder()Lokhttp3/Request$Builder;
+
+    move-result-object p1
+
+    .line 69
+    invoke-virtual {p1, v2}, Lokhttp3/Request$Builder;->url(Ljava/lang/String;)Lokhttp3/Request$Builder;
+
+    move-result-object p1
+
+    .line 70
+    invoke-virtual {p1, p2}, Lokhttp3/Request$Builder;->post(Lokhttp3/RequestBody;)Lokhttp3/Request$Builder;
+
+    move-result-object p1
+
+    .line 71
+    invoke-virtual {p1, v0}, Lokhttp3/Request$Builder;->removeHeader(Ljava/lang/String;)Lokhttp3/Request$Builder;
+
+    move-result-object p1
+
+    iget-object p2, p0, Lio/kamihama/magianative/RestClient;->UserAgent:Ljava/lang/String;
+
+    .line 72
+    invoke-virtual {p1, v0, p2}, Lokhttp3/Request$Builder;->addHeader(Ljava/lang/String;Ljava/lang/String;)Lokhttp3/Request$Builder;
+
+    move-result-object p1
+
+    .line 73
+    invoke-virtual {p1}, Lokhttp3/Request$Builder;->build()Lokhttp3/Request;
+
+    move-result-object p1
+
+    .line 75
+    iget-object p2, p0, Lio/kamihama/magianative/RestClient;->client:Lokhttp3/OkHttpClient;
+
+    invoke-virtual {p2, p1}, Lokhttp3/OkHttpClient;->newCall(Lokhttp3/Request;)Lokhttp3/Call;
+
+    move-result-object p1
+
+    invoke-interface {p1}, Lokhttp3/Call;->execute()Lokhttp3/Response;
+
+    move-result-object p1
+
     .line 76
-    .local v2, "newResponse":Lokhttp3/Response;
-    invoke-virtual {v2}, Lokhttp3/Response;->body()Lokhttp3/ResponseBody;
+    invoke-virtual {p1}, Lokhttp3/Response;->body()Lokhttp3/ResponseBody;
 
-    move-result-object v5
+    move-result-object p2
 
-    if-eqz v5, :cond_7e
+    if-eqz p2, :cond_1
 
-    invoke-virtual {v2}, Lokhttp3/Response;->body()Lokhttp3/ResponseBody;
+    invoke-virtual {p1}, Lokhttp3/Response;->body()Lokhttp3/ResponseBody;
 
-    move-result-object v5
+    move-result-object p1
 
-    invoke-virtual {v5}, Lokhttp3/ResponseBody;->string()Ljava/lang/String;
+    invoke-virtual {p1}, Lokhttp3/ResponseBody;->string()Ljava/lang/String;
 
-    move-result-object v5
+    move-result-object v4
+
+    :cond_1
+    return-object v4
 
     .line 79
-    .end local v1    # "location":Ljava/lang/String;
-    .end local v2    # "newResponse":Lokhttp3/Response;
-    :goto_7d
-    return-object v5
+    :cond_2
+    invoke-virtual {v1}, Lokhttp3/Response;->body()Lokhttp3/ResponseBody;
 
-    .line 76
-    .restart local v1    # "location":Ljava/lang/String;
-    .restart local v2    # "newResponse":Lokhttp3/Response;
-    :cond_7e
-    const-string v5, ""
+    move-result-object p1
 
-    goto :goto_7d
+    if-eqz p1, :cond_3
 
-    .line 79
-    .end local v1    # "location":Ljava/lang/String;
-    .end local v2    # "newResponse":Lokhttp3/Response;
-    :cond_81
-    invoke-virtual {v4}, Lokhttp3/Response;->body()Lokhttp3/ResponseBody;
+    invoke-virtual {v1}, Lokhttp3/Response;->body()Lokhttp3/ResponseBody;
 
-    move-result-object v5
+    move-result-object p1
 
-    if-eqz v5, :cond_90
+    invoke-virtual {p1}, Lokhttp3/ResponseBody;->string()Ljava/lang/String;
 
-    invoke-virtual {v4}, Lokhttp3/Response;->body()Lokhttp3/ResponseBody;
+    move-result-object v4
 
-    move-result-object v5
-
-    invoke-virtual {v5}, Lokhttp3/ResponseBody;->string()Ljava/lang/String;
-
-    move-result-object v5
-
-    goto :goto_7d
-
-    :cond_90
-    const-string v5, ""
-
-    goto :goto_7d
+    :cond_3
+    return-object v4
 .end method
 
 
 # virtual methods
 .method public GetEndpoint(I)Ljava/lang/String;
-    .registers 7
-    .param p1, "version"    # I
+    .locals 4
 
-    .prologue
+    const-string v0, ""
+
+    const-string v1, "MagiaClientJNI"
+
     .line 30
-    new-instance v1, Lorg/json/JSONObject;
+    new-instance v2, Lorg/json/JSONObject;
 
-    invoke-direct {v1}, Lorg/json/JSONObject;-><init>()V
+    invoke-direct {v2}, Lorg/json/JSONObject;-><init>()V
+
+    :try_start_0
+    const-string v3, "version"
 
     .line 33
-    .local v1, "jsonString":Lorg/json/JSONObject;
-    :try_start_5
-    const-string v2, "version"
+    invoke-virtual {v2, v3, p1}, Lorg/json/JSONObject;->put(Ljava/lang/String;I)Lorg/json/JSONObject;
+    :try_end_0
+    .catch Lorg/json/JSONException; {:try_start_0 .. :try_end_0} :catch_1
 
-    invoke-virtual {v1, v2, p1}, Lorg/json/JSONObject;->put(Ljava/lang/String;I)Lorg/json/JSONObject;
-    :try_end_a
-    .catch Lorg/json/JSONException; {:try_start_5 .. :try_end_a} :catch_15
+    :try_start_1
+    const-string p1, "https://walpurgisnacht.rayshift.io/api/v1/endpoint"
 
     .line 40
-    :try_start_a
-    const-string v2, "https://walpurgisnacht.rayshift.io/api/v1/endpoint"
-
-    invoke-virtual {v1}, Lorg/json/JSONObject;->toString()Ljava/lang/String;
-
-    move-result-object v3
-
-    invoke-direct {p0, v2, v3}, Lio/kamihama/magianative/RestClient;->postRequest(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
-    :try_end_13
-    .catch Ljava/io/IOException; {:try_start_a .. :try_end_13} :catch_35
+    invoke-virtual {v2}, Lorg/json/JSONObject;->toString()Ljava/lang/String;
 
     move-result-object v2
 
-    .line 43
-    :goto_14
-    return-object v2
+    invoke-direct {p0, p1, v2}, Lio/kamihama/magianative/RestClient;->postRequest(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 
-    .line 34
-    :catch_15
-    move-exception v0
+    move-result-object p1
+    :try_end_1
+    .catch Ljava/io/IOException; {:try_start_1 .. :try_end_1} :catch_0
 
-    .line 35
-    .local v0, "e":Lorg/json/JSONException;
-    const-string v2, "MagiaClientJNI"
+    return-object p1
 
-    new-instance v3, Ljava/lang/StringBuilder;
-
-    invoke-direct {v3}, Ljava/lang/StringBuilder;-><init>()V
-
-    const-string v4, "Error adding version: "
-
-    invoke-virtual {v3, v4}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    move-result-object v3
-
-    invoke-virtual {v0}, Lorg/json/JSONException;->toString()Ljava/lang/String;
-
-    move-result-object v4
-
-    invoke-virtual {v3, v4}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-
-    move-result-object v3
-
-    invoke-virtual {v3}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
-
-    move-result-object v3
-
-    invoke-static {v2, v3}, Landroid/util/Log;->e(Ljava/lang/String;Ljava/lang/String;)I
-
-    .line 36
-    const-string v2, ""
-
-    goto :goto_14
-
-    .line 41
-    .end local v0    # "e":Lorg/json/JSONException;
-    :catch_35
-    move-exception v0
+    :catch_0
+    move-exception p1
 
     .line 42
-    .local v0, "e":Ljava/io/IOException;
-    const-string v2, "MagiaClientJNI"
+    new-instance v2, Ljava/lang/StringBuilder;
 
-    new-instance v3, Ljava/lang/StringBuilder;
+    const-string v3, "Error with request: "
 
-    invoke-direct {v3}, Ljava/lang/StringBuilder;-><init>()V
+    invoke-direct {v2, v3}, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
 
-    const-string v4, "Error with request: "
+    invoke-virtual {p1}, Ljava/io/IOException;->toString()Ljava/lang/String;
 
-    invoke-virtual {v3, v4}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object p1
 
-    move-result-object v3
+    invoke-virtual {v2, p1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    invoke-virtual {v0}, Ljava/io/IOException;->toString()Ljava/lang/String;
+    invoke-virtual {v2}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
 
-    move-result-object v4
+    move-result-object p1
 
-    invoke-virtual {v3, v4}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    invoke-static {v1, p1}, Landroid/util/Log;->e(Ljava/lang/String;Ljava/lang/String;)I
 
-    move-result-object v3
+    return-object v0
 
-    invoke-virtual {v3}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    :catch_1
+    move-exception p1
 
-    move-result-object v3
+    .line 35
+    new-instance v2, Ljava/lang/StringBuilder;
 
-    invoke-static {v2, v3}, Landroid/util/Log;->e(Ljava/lang/String;Ljava/lang/String;)I
+    const-string v3, "Error adding version: "
 
-    .line 43
-    const-string v2, ""
+    invoke-direct {v2, v3}, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
 
-    goto :goto_14
+    invoke-virtual {p1}, Lorg/json/JSONException;->toString()Ljava/lang/String;
+
+    move-result-object p1
+
+    invoke-virtual {v2, p1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+
+    invoke-virtual {v2}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+
+    move-result-object p1
+
+    invoke-static {v1, p1}, Landroid/util/Log;->e(Ljava/lang/String;Ljava/lang/String;)I
+
+    return-object v0
 .end method
