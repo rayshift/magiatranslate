@@ -1,6 +1,9 @@
 # Magia Translate
-[![Discord Chat](https://img.shields.io/discord/665980614998097941.svg)](https://discord.gg/6vncnjj)  
-This is the client source code for Magia Translate, an English translation modification for Magia Record JP. It is licenced under the GNU General Public License v3.0.
+[![GitHub Release](https://img.shields.io/github/release/rayshift/magiatranslate.svg?style=flat)](https://github.com/rayshift/magiatranslate/releases)  [![Github All Releases](https://img.shields.io/github/downloads/rayshift/magiatranslate/total.svg?style=flat)](https://github.com/rayshift/magiatranslate/releases)  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Discord Chat](https://img.shields.io/discord/665980614998097941.svg)](https://discord.gg/6vncnjj)
+
+This is the client source code for Magia Translate, an English translation modification for Magia Record JP. It is licensed under the MIT license.
+
+Magia Record JP has reached end of service as of the 31st July 2024. As such, this app has no further purpose, and has been retired. We thank you for your support over the last 4 years.
 
 ## How to build
 - Clone the repository including all submodules `git clone --recurse-submodules https://github.com/rayshift/magiatranslate`
